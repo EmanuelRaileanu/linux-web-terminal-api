@@ -1,4 +1,4 @@
-import { bootstrapServer } from "../../shared/utils";
+import { bootstrapServer } from "@utils";
 import { config } from "./config";
 import { AppModule } from "./app.module";
 
