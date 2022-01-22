@@ -1,0 +1,18 @@
+{
+    "collection": "@nestjs/schematics",
+    "sourceRoot": ".",
+    "projects": {
+        "api": {
+            "type": "application",
+            "entryFile": "api/src/main"
+        },
+        "auth": {
+            "type": "application",
+            "entryFile": "auth/src/main"
+        },
+        "vm-manager": {
+            "type": "application",
+            "entryFile": "vm-manager/src/main"
+        }
+    }
+}
