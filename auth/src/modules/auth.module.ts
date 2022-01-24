@@ -7,6 +7,8 @@ import { LocalStrategy } from "../strategies/local.strategy";
 import { JwtModule } from "@nestjs/jwt";
 import { config } from "../config";
 import { JwtStrategy } from "../strategies/jwt.strategy";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "../entities/db/user.entity";
 
 @Module({
     imports: [
@@ -15,6 +17,13 @@ import { JwtStrategy } from "../strategies/jwt.strategy";
         JwtModule.register({
             secret: config.jwt.secret,
             signOptions: { expiresIn: config.jwt.lifespan }
+        }),
+        TypeOrmModule.forRoot({
+            type: "mysql",
+            ...config.db,
+            entities: [User],
+            synchronize: true,
+            autoLoadEntities: true
         })
     ],
     controllers: [AuthController],

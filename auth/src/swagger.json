@@ -1,0 +1,341 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "{schema}://{domain}",
+            "variables": {
+                "schema": {
+                    "default": "http",
+                    "enum": [
+                        "http",
+                        "https"
+                    ]
+                },
+                "domain": {
+                    "default": "localhost:8001",
+                    "enum": [
+                        "localhost:8001"
+                    ]
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/api/v1/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "operationId": "AuthController_register",
+                "description": "Register",
+                "security": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordsDoNotMatchResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/UsernameAlreadyInUseResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/EmailAlreadyInUseResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "operationId": "AuthController_login",
+                "description": "Login",
+                "security": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WrongPasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserNotFoundResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "operationId": "AuthController_getProfile",
+                "description": "Get the current user's profile",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "title": "Auth",
+        "description": "Authentication api using JWT",
+        "version": "1.0",
+        "contact": {}
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Endpoints for authentication"
+        },
+        {
+            "name": "Profile",
+            "description": "Profile routes"
+        }
+    ],
+    "security": [
+        {
+            "httpBearer": [ ]
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "httpBearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "RegisterRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "JohnWizard123"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "supernova"
+                    },
+                    "confirmedPassword": {
+                        "type": "string",
+                        "example": "supernova"
+                    }
+                }
+            },
+            "ValidationErrorResponseMessage": {
+                "type": "string",
+                "example": "<property> should not be empty"
+            },
+            "ValidationErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 400
+                    },
+                    "message": {
+                        "$ref": "#/components/schemas/ValidationErrorResponseMessage"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Bad Request"
+                    }
+                }
+            },
+            "UsernameAlreadyInUseResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 409
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "A user with this username already exists"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Conflict"
+                    }
+                }
+            },
+            "EmailAlreadyInUseResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 409
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "A user with this username already exists"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Conflict"
+                    }
+                }
+            },
+            "PasswordsDoNotMatchResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 400
+                    },
+                    "message": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "example": "Passwords do not match"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponseMessage"
+                                }
+                            }
+                        ]
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Bad Request"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "JohnWizard123"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "supernova"
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "json_web_token"
+                    }
+                }
+            },
+            "WrongPasswordResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 403
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Wrong password"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Forbidden"
+                    }
+                }
+            },
+            "UserNotFoundResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 404
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User not found"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Not Found"
+                    }
+                }
+            }
+        }
+    }
+}

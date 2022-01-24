@@ -1,0 +1,32 @@
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from "@nestjs/common";
+import { UserConflictReasons } from "./entities/auth.entities";
+
+export class UserNotFoundError extends NotFoundException {
+    constructor() {
+        super("User not found");
+    }
+}
+
+export class PasswordsDoNotMatchError extends BadRequestException {
+    constructor() {
+        super("Passwords do not match");
+    }
+}
+
+export class WrongPasswordError extends ForbiddenException {
+    constructor() {
+        super("Wrong password");
+    }
+}
+
+export class UserAlreadyExistsError extends ConflictException {
+    constructor(reason: UserConflictReasons = UserConflictReasons.username) {
+        super("A user with this " + reason + " already exists");
+    }
+}
+
+export class ValidationError extends BadRequestException {
+    constructor(fieldName: string) {
+        super(fieldName + " should not be empty");
+    }
+}
