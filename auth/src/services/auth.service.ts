@@ -1,14 +1,17 @@
-import { Injectable } from "@nestjs/common";
+import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
+import { Cache } from "cache-manager";
 import { UserService } from "./user.service";
 import { RegisterRequest, UserConflictReasons, ValidateUserResponse } from "../entities/auth.entities";
 import { JwtService } from "@nestjs/jwt";
 import { JwtResponse } from "../entities/jwt.entities";
 import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../errors";
 import * as bcrypt from "bcryptjs";
+import { config } from "../config";
 
 @Injectable()
 export class AuthService {
     constructor(
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly userService: UserService,
         private readonly jwtService: JwtService
     ) {}
@@ -44,8 +47,12 @@ export class AuthService {
     }
 
     public async login(user: ValidateUserResponse): Promise<JwtResponse> {
-        return {
-            token: this.jwtService.sign(user)
-        };
+        const token = this.jwtService.sign(user);
+        await this.cacheManager.set<string>(user.id, token, { ttl: config.jwt.lifespan });
+        return { token };
+    }
+
+    public async logout(user: ValidateUserResponse): Promise<void> {
+        await this.cacheManager.del(user.id);
     }
 }

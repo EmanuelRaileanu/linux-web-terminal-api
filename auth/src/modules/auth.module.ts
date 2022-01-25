@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { CacheModule, Module } from "@nestjs/common";
 import { AuthController } from "../controllers/auth.controller";
 import { AuthService } from "../services/auth.service";
 import { UserModule } from "./user.module";
@@ -9,6 +9,8 @@ import { config } from "../config";
 import { JwtStrategy } from "../strategies/jwt.strategy";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../entities/db/user.entity";
+import type { ClientOpts as RedisClientOpts } from "redis";
+import * as redisStore from "cache-manager-redis-store";
 
 @Module({
     imports: [
@@ -16,7 +18,7 @@ import { User } from "../entities/db/user.entity";
         PassportModule,
         JwtModule.register({
             secret: config.jwt.secret,
-            signOptions: { expiresIn: config.jwt.lifespan }
+            signOptions: { expiresIn: config.jwt.lifespan + "s" }
         }),
         TypeOrmModule.forRoot({
             type: "mysql",
@@ -24,6 +26,11 @@ import { User } from "../entities/db/user.entity";
             entities: [User],
             synchronize: true,
             autoLoadEntities: true
+        }),
+        CacheModule.register<RedisClientOpts>({
+            store: redisStore,
+            host: config.redis.host,
+            port: config.redis.port
         })
     ],
     controllers: [AuthController],

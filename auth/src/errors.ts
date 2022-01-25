@@ -1,4 +1,10 @@
-import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from "@nestjs/common";
+import {
+    BadRequestException,
+    ConflictException,
+    ForbiddenException,
+    NotFoundException,
+    UnauthorizedException
+} from "@nestjs/common";
 import { UserConflictReasons } from "./entities/auth.entities";
 
 export class UserNotFoundError extends NotFoundException {
@@ -28,5 +34,17 @@ export class UserAlreadyExistsError extends ConflictException {
 export class ValidationError extends BadRequestException {
     constructor(fieldName: string) {
         super(fieldName + " should not be empty");
+    }
+}
+
+export class InvalidBearerTokenError extends UnauthorizedException {
+    constructor() {
+        super("The provided bearer token is invalid");
+    }
+}
+
+export class SessionExpiredError extends UnauthorizedException {
+    constructor() {
+        super("Session expired");
     }
 }

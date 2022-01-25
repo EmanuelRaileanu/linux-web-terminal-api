@@ -15,19 +15,26 @@ export class AuthController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post("register")
-    public async register(@Body() body: RegisterRequest): Promise<void> {
+    public register(@Body() body: RegisterRequest): Promise<void> {
         return this.authService.register(body);
     }
 
     @UseGuards(LocalAuthGuard)
     @HttpCode(HttpStatus.OK)
     @Post("login")
-    public async login(@Request() req: UserEntityHolder): Promise<JwtResponse> {
+    public login(@Request() req: UserEntityHolder): Promise<JwtResponse> {
         return this.authService.login(req.user);
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get("profile")
+    @HttpCode(HttpStatus.OK)
+    @Post("logout")
+    public logout(@Request() req: UserEntityHolder): Promise<void> {
+        return this.authService.logout(req.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("validate-token")
     public getProfile(@Request() req: UserEntityHolder): GetProfileResponse {
         return req.user;
     }

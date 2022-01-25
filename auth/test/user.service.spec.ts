@@ -1,5 +1,5 @@
 import { UserService } from "../src/services/user.service";
-import { getConnection, getRepository, QueryFailedError, Repository } from "typeorm";
+import { getRepository, QueryFailedError, Repository } from "typeorm";
 import { User } from "../src/entities/db/user.entity";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -53,7 +53,7 @@ describe(UserService, () => {
 
     afterAll(async () => {
         await userRepository.clear();
-        return getConnection().close();
+        return moduleRef.close();
     });
 
     test("Fetch user by id", () => {
