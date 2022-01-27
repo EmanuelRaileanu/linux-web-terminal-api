@@ -98,6 +98,9 @@
         "modulePathIgnorePatterns": [
             "dist"
         ],
+        "moduleNameMapper": {
+            "@utils": "<rootDir>/shared/utils"
+        },
         "coverageDirectory": "../coverage",
         "testEnvironment": "node"
     }

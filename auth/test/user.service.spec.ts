@@ -4,6 +4,7 @@ import { User } from "../src/entities/db/user.entity";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "../src/config";
+import { CacheModule } from "@nestjs/common";
 
 describe(UserService, () => {
     let users: User[];
@@ -21,7 +22,8 @@ describe(UserService, () => {
                     database: config.testDb,
                     autoLoadEntities: true,
                     synchronize: true
-                })
+                }),
+                CacheModule.register()
             ],
             providers: [UserService]
         }).compile();
@@ -29,20 +31,19 @@ describe(UserService, () => {
         userService = moduleRef.get<UserService>(UserService);
 
         userRepository = getRepository<User>(User);
-        await userRepository.clear();
         users = [
             {
                 id: "1ff9185d-0cfd-4df9-a9b7-f7255b43f971",
-                username: "john",
-                email: "john@email.com",
+                username: "jared",
+                email: "jared@email.com",
                 password: "password",
                 createdAt: new Date,
                 updatedAt: new Date()
             },
             {
                 id: "9787ea52-56bf-4896-82dd-6a198ccea54e",
-                username: "mary",
-                email: "mary@email.com",
+                username: "natalia",
+                email: "natalia@email.com",
                 password: "joker",
                 createdAt: new Date,
                 updatedAt: new Date()
@@ -52,7 +53,7 @@ describe(UserService, () => {
     });
 
     afterAll(async () => {
-        await userRepository.clear();
+        await userRepository.remove(users);
         return moduleRef.close();
     });
 
@@ -65,7 +66,7 @@ describe(UserService, () => {
     });
 
     test("Fetch user by username", () => {
-        return expect(userService.findByUsername("john")).resolves.toEqual(users[0]);
+        return expect(userService.findByUsername("jared")).resolves.toEqual(users[0]);
     });
 
     test("Fetch user by username when user doesn't exist", () => {
@@ -73,7 +74,7 @@ describe(UserService, () => {
     });
 
     test("Fetch user by email", () => {
-        return expect(userService.findByEmail("john@email.com")).resolves.toEqual(users[0]);
+        return expect(userService.findByEmail("jared@email.com")).resolves.toEqual(users[0]);
     });
 
     test("Fetch user by email when user doesn't exist", () => {
@@ -87,13 +88,14 @@ describe(UserService, () => {
             password: "darkKnight"
         };
         const createdUser = await userService.create(user);
+        users.push(createdUser);
         return expect(userService.findByUsername(user.username)).resolves.toEqual(createdUser);
     });
 
     test("Add an user with the same email as an already existing one", () => {
         const user = {
             username: "vlad",
-            email: "john@email.com",
+            email: "jared@email.com",
             password: "bat"
         };
         return expect(userService.create(user)).rejects.toThrowError(QueryFailedError);
@@ -101,7 +103,7 @@ describe(UserService, () => {
 
     test("Add an user with the same username as an already existing one", () => {
         const user = {
-            username: "john",
+            username: "jared",
             email: "barrel@email.com",
             password: "forest"
         };

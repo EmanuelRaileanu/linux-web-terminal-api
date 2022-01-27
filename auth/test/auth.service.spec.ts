@@ -9,10 +9,10 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { LocalStrategy } from "../src/strategies/local.strategy";
 import { JwtStrategy } from "../src/strategies/jwt.strategy";
-import { CacheModule } from "@nestjs/common";
 import * as bcrypt from "bcryptjs";
 import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../src/errors";
 import { RegisterRequest, ValidateUserResponse } from "../src/entities/auth.entities";
+import { CacheModule } from "@nestjs/common";
 
 describe(AuthService, () => {
     let users: User[];
@@ -46,7 +46,6 @@ describe(AuthService, () => {
         jwtService = moduleRef.get<JwtService>(JwtService);
 
         userRepository = getRepository<User>(User);
-        await userRepository.clear();
         users = [
             {
                 id: "1ff9185d-0cfd-4df9-a9b7-f7255b43f971",
@@ -69,7 +68,7 @@ describe(AuthService, () => {
     });
 
     afterAll(async () => {
-        await userRepository.clear();
+        await userRepository.remove(users);
         return moduleRef.close();
     });
 
@@ -101,6 +100,7 @@ describe(AuthService, () => {
         };
         await expect(authService.register(registerRequest)).resolves.toEqual(undefined);
         const createdUser = await userRepository.findOne({ username: registerRequest.username });
+        users.push(createdUser as User);
         expect(registerRequest.username).toEqual(createdUser?.username);
         expect(registerRequest.email).toEqual(createdUser?.email);
     });
