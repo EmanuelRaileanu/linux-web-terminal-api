@@ -1,4 +1,4 @@
-import { CacheModule, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { AuthController } from "../controllers/auth.controller";
 import { AuthService } from "../services/auth.service";
 import { UserModule } from "./user.module";
@@ -9,8 +9,7 @@ import { config } from "../config";
 import { JwtStrategy } from "../strategies/jwt.strategy";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../entities/db/user.entity";
-import type { ClientOpts as RedisClientOpts } from "redis";
-import * as redisStore from "cache-manager-redis-store";
+import { UserController } from "../controllers/user.controller";
 
 @Module({
     imports: [
@@ -26,14 +25,9 @@ import * as redisStore from "cache-manager-redis-store";
             entities: [User],
             synchronize: true,
             autoLoadEntities: true
-        }),
-        CacheModule.register<RedisClientOpts>({
-            store: redisStore,
-            host: config.redis.host,
-            port: config.redis.port
         })
     ],
-    controllers: [AuthController],
+    controllers: [AuthController, UserController],
     providers: [AuthService, LocalStrategy, JwtStrategy]
 })
 export class AuthModule {}

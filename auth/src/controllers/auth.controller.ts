@@ -35,7 +35,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Get("validate-token")
-    public getProfile(@Request() req: UserEntityHolder): GetProfileResponse {
+    public validateToken(@Request() req: UserEntityHolder): GetProfileResponse {
         return req.user;
     }
 }
