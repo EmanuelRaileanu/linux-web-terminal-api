@@ -3,7 +3,6 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import { AuthService } from "../services/auth.service";
 import { ValidateUserResponse } from "../entities/auth.entities";
-import { UserNotFoundError } from "../errors";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -11,11 +10,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         super();
     }
 
-    public async validate(username: string, password: string): Promise<ValidateUserResponse> {
-        const user = await this.authService.validateUser(username, password);
-        if (!user) {
-            throw new UserNotFoundError();
-        }
-        return user;
+    public validate(username: string, password: string): Promise<ValidateUserResponse> {
+        return this.authService.validateUser(username, password);
     }
 }

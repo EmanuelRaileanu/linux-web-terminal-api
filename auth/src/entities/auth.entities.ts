@@ -40,8 +40,8 @@ export interface ValidateUserResponse {
 }
 
 export interface SessionUserEntity extends ValidateUserResponse {
-    iat: number;
-    exp: number;
+    iat?: number;
+    exp?: number;
 }
 
 export type GetProfileResponse = SessionUserEntity;
