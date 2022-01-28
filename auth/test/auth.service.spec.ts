@@ -52,7 +52,7 @@ describe(AuthService, () => {
                 username: "john",
                 email: "john@email.com",
                 password: await bcrypt.hash("password", await bcrypt.genSalt()),
-                createdAt: new Date,
+                createdAt: new Date(),
                 updatedAt: new Date()
             },
             {
@@ -60,7 +60,7 @@ describe(AuthService, () => {
                 username: "mary",
                 email: "mary@email.com",
                 password: await bcrypt.hash("joker", await bcrypt.genSalt()),
-                createdAt: new Date,
+                createdAt: new Date(),
                 updatedAt: new Date()
             }
         ];

@@ -5,6 +5,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "../src/config";
 import { CacheModule } from "@nestjs/common";
+import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
+import { SessionUserEntity } from "../src/entities/auth.entities";
+import * as bcrypt from "bcryptjs";
+import { PasswordsDoNotMatchError, UserNotFoundError, WrongPasswordError } from "../src/errors";
 
 describe(UserService, () => {
     let users: User[];
@@ -33,19 +37,19 @@ describe(UserService, () => {
         userRepository = getRepository<User>(User);
         users = [
             {
-                id: "1ff9185d-0cfd-4df9-a9b7-f7255b43f971",
+                id: "49e2ad64-ff8f-4319-a1d2-4f602ffeaa75",
                 username: "jared",
                 email: "jared@email.com",
-                password: "password",
-                createdAt: new Date,
+                password: await bcrypt.hash("password", await bcrypt.genSalt()),
+                createdAt: new Date(),
                 updatedAt: new Date()
             },
             {
-                id: "9787ea52-56bf-4896-82dd-6a198ccea54e",
+                id: "5870295a-3ce2-40f5-b9cf-d03afa20a600",
                 username: "natalia",
                 email: "natalia@email.com",
-                password: "joker",
-                createdAt: new Date,
+                password: await bcrypt.hash("jester", await bcrypt.genSalt()),
+                createdAt: new Date(),
                 updatedAt: new Date()
             }
         ];
@@ -118,5 +122,111 @@ describe(UserService, () => {
 
     test("Delete user by id when user is not found", () => {
         return expect(userService.deleteById("8814aa9c-7d83-426b-b059-7ca128dbd81a")).resolves.toEqual(undefined);
+    });
+
+    test("Change username", async () => {
+        const changeUsernameRequest: ChangeUsernameRequest = {
+            newUsername: "frank",
+            password: "password"
+        };
+        const promise = userService.changeUsername(users[0] as unknown as SessionUserEntity, changeUsernameRequest);
+        await expect(promise).resolves.toEqual(undefined);
+        users[0] = { ...users[0], username: changeUsernameRequest.newUsername };
+        const updatedUser = await userService.findById(users[0].id);
+        return expect(updatedUser?.username).toEqual(users[0].username);
+    });
+
+    test("Changing username fails with UserNotFoundError when the user doesn't exist", () => {
+        const changeUsernameRequest: ChangeUsernameRequest = {
+            newUsername: "frank",
+            password: "password"
+        };
+        const user = { id: "3408ba41-3b24-4e17-b589-e8b9af2d1d8c" } as SessionUserEntity;
+        const promise = userService.changeUsername(user, changeUsernameRequest);
+        return expect(promise).rejects.toThrowError(UserNotFoundError);
+    });
+
+    test("Changing username fails with WrongPasswordError when providing the wrong current password", () => {
+        const changeUsernameRequest: ChangeUsernameRequest = {
+            newUsername: "spider",
+            password: "desktop"
+        };
+        const promise = userService.changeUsername(users[0] as unknown as SessionUserEntity, changeUsernameRequest);
+        return expect(promise).rejects.toThrowError(WrongPasswordError);
+    });
+
+    test("Change email", async () => {
+        const changeEmailRequest: ChangeEmailRequest = {
+            newEmail: "frank@castle.com",
+            password: "password"
+        };
+        const promise = userService.changeEmail(users[0] as unknown as SessionUserEntity, changeEmailRequest);
+        await expect(promise).resolves.toEqual(undefined);
+        users[0] = { ...users[0], email: changeEmailRequest.newEmail };
+        const updatedUser = await userService.findById(users[0].id);
+        return expect(updatedUser?.email).toEqual(users[0].email);
+    });
+
+    test("Changing email fails with UserNotFoundError when the user doesn't exist", () => {
+        const changeEmailRequest: ChangeEmailRequest = {
+            newEmail: "pete@castiglioni.com",
+            password: "password"
+        };
+        const user = { id: "3408ba41-3b24-4e17-b589-e8b9af2d1d8c" } as SessionUserEntity;
+        const promise = userService.changeEmail(user, changeEmailRequest);
+        return expect(promise).rejects.toThrowError(UserNotFoundError);
+    });
+
+    test("Changing email fails with WrongPasswordError when providing the wrong current password", () => {
+        const changeEmailRequest: ChangeEmailRequest = {
+            newEmail: "pete@castiglioni@gmail.com",
+            password: "desktop"
+        };
+        const promise = userService.changeEmail(users[0] as unknown as SessionUserEntity, changeEmailRequest);
+        return expect(promise).rejects.toThrowError(WrongPasswordError);
+    });
+
+    test("Change password", async () => {
+        const changePasswordRequest: ChangePasswordRequest = {
+            currentPassword: "password",
+            newPassword: "sparta",
+            confirmedNewPassword: "sparta"
+        };
+        const promise = userService.changePassword(users[0] as unknown as SessionUserEntity, changePasswordRequest);
+        await expect(promise).resolves.toEqual(undefined);
+        const updatedUser = await userService.findById(users[0].id);
+        users[0] = { ...users[0], password: updatedUser?.password as string };
+        return expect(await bcrypt.compare(changePasswordRequest.newPassword, updatedUser?.password as string));
+    });
+
+    test("Change password fails with UserNotFoundError when the user doesn't exist", () => {
+        const changePasswordRequest: ChangePasswordRequest = {
+            currentPassword: "password",
+            newPassword: "sparta",
+            confirmedNewPassword: "sparta"
+        };
+        const user = { id: "3408ba41-3b24-4e17-b589-e8b9af2d1d8c" } as SessionUserEntity;
+        const promise = userService.changePassword(user, changePasswordRequest);
+        return expect(promise).rejects.toThrowError(UserNotFoundError);
+    });
+
+    test("Change password fails with WrongPasswordError when providing the wrong current password", () => {
+        const changePasswordRequest: ChangePasswordRequest = {
+            currentPassword: "fishy",
+            newPassword: "sparta",
+            confirmedNewPassword: "sparta"
+        };
+        const promise = userService.changePassword(users[0] as unknown as SessionUserEntity, changePasswordRequest);
+        return expect(promise).rejects.toThrowError(WrongPasswordError);
+    });
+
+    test("Change password fails with WrongPasswordError when passwords do not match", () => {
+        const changePasswordRequest: ChangePasswordRequest = {
+            currentPassword: "sparta",
+            newPassword: "spear",
+            confirmedNewPassword: "spearhead"
+        };
+        const promise = userService.changePassword(users[0] as unknown as SessionUserEntity, changePasswordRequest);
+        return expect(promise).rejects.toThrowError(PasswordsDoNotMatchError);
     });
 });
