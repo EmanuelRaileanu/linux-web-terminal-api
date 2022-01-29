@@ -31,12 +31,6 @@ export class UserAlreadyExistsError extends ConflictException {
     }
 }
 
-export class ValidationError extends BadRequestException {
-    constructor(fieldName: string) {
-        super(fieldName + " should not be empty");
-    }
-}
-
 export class InvalidBearerTokenError extends UnauthorizedException {
     constructor() {
         super("The provided bearer token is invalid");

@@ -27,6 +27,9 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
         if (splitToken.length < 2) {
             throw new InvalidBearerTokenError();
         }
+        if (splitToken[0].toLowerCase() !== "bearer") {
+            throw new InvalidBearerTokenError();
+        }
 
         const user = this.jwtService.verify<SessionUserEntity>(splitToken[1]);
         const cachedToken = await this.cacheManager.get<string>(user.id);
