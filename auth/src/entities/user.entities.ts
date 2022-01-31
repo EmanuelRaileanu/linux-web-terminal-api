@@ -10,8 +10,6 @@ export class ChangeUsernameRequest {
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(10)
-    @MaxLength(50)
     password: string;
 }
 
@@ -23,8 +21,6 @@ export class ChangeEmailRequest {
 
     @IsNotEmpty()
     @IsString()
-    @MinLength(10)
-    @MaxLength(50)
     password: string;
 }
 
