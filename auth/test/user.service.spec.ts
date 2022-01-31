@@ -8,7 +8,7 @@ import { CacheModule } from "@nestjs/common";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
 import { SessionUserEntity } from "../src/entities/auth.entities";
 import * as bcrypt from "bcryptjs";
-import { PasswordsDoNotMatchError, UserNotFoundError, WrongPasswordError } from "../src/errors";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../src/errors";
 
 describe(UserService, () => {
     let users: User[];
@@ -114,14 +114,13 @@ describe(UserService, () => {
         return expect(userService.create(user)).rejects.toThrowError(QueryFailedError);
     });
 
-    test("Delete user by id", async () => {
-        const id = users[1].id;
-        await userService.deleteById(id);
-        return expect(userService.findById(id)).resolves.toEqual(undefined);
-    });
-
-    test("Delete user by id when user is not found", () => {
-        return expect(userService.deleteById("8814aa9c-7d83-426b-b059-7ca128dbd81a")).resolves.toEqual(undefined);
+    test("Changing username fails with UserAlreadyExistsError when the username is already in use", () => {
+        const changeUsernameRequest: ChangeUsernameRequest = {
+            newUsername: users[0].username,
+            password: "jester"
+        };
+        const promise = userService.changeUsername(users[1] as unknown as SessionUserEntity, changeUsernameRequest);
+        return expect(promise).rejects.toThrowError(UserAlreadyExistsError);
     });
 
     test("Change username", async () => {
@@ -153,6 +152,15 @@ describe(UserService, () => {
         };
         const promise = userService.changeUsername(users[0] as unknown as SessionUserEntity, changeUsernameRequest);
         return expect(promise).rejects.toThrowError(WrongPasswordError);
+    });
+
+    test("Changing email fails with UserAlreadyExistsError when the email is already in use", () => {
+        const changeEmailRequest: ChangeEmailRequest = {
+            newEmail: users[0].email,
+            password: "jester"
+        };
+        const promise = userService.changeEmail(users[1] as unknown as SessionUserEntity, changeEmailRequest);
+        return expect(promise).rejects.toThrowError(UserAlreadyExistsError);
     });
 
     test("Change email", async () => {
@@ -228,5 +236,15 @@ describe(UserService, () => {
         };
         const promise = userService.changePassword(users[0] as unknown as SessionUserEntity, changePasswordRequest);
         return expect(promise).rejects.toThrowError(PasswordsDoNotMatchError);
+    });
+
+    test("Delete user by id", async () => {
+        const id = users[1].id;
+        await userService.deleteById(id);
+        return expect(userService.findById(id)).resolves.toEqual(undefined);
+    });
+
+    test("Delete user by id when user is not found", () => {
+        return expect(userService.deleteById("8814aa9c-7d83-426b-b059-7ca128dbd81a")).resolves.toEqual(undefined);
     });
 });

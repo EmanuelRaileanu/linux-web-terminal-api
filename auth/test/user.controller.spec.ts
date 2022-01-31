@@ -9,7 +9,7 @@ import * as bcrypt from "bcryptjs";
 import { UserController } from "../src/controllers/user.controller";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
 import { SessionUserEntity, UserEntityHolder } from "../src/entities/auth.entities";
-import { PasswordsDoNotMatchError, UserNotFoundError, WrongPasswordError } from "../src/errors";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../src/errors";
 import { JwtModule } from "@nestjs/jwt";
 
 describe(UserService, () => {
@@ -69,6 +69,15 @@ describe(UserService, () => {
         return moduleRef.close();
     });
 
+    test("Changing username fails with UserAlreadyExistsError when the username is already in use", () => {
+        const changeUsernameRequest: ChangeUsernameRequest = {
+            newUsername: users[1].username,
+            password: "password"
+        };
+        const promise = userController.changeUsername(userEntityHolder, changeUsernameRequest);
+        return expect(promise).rejects.toThrowError(UserAlreadyExistsError);
+    });
+
     test("Change username", async () => {
         const changeUsernameRequest: ChangeUsernameRequest = {
             newUsername: "scott",
@@ -98,6 +107,15 @@ describe(UserService, () => {
         };
         const promise = userController.changeUsername(userEntityHolder, changeUsernameRequest);
         return expect(promise).rejects.toThrowError(WrongPasswordError);
+    });
+
+    test("Changing email fails with UserAlreadyExistsError when the email is already in use", () => {
+        const changeEmailRequest: ChangeEmailRequest = {
+            newEmail: users[1].email,
+            password: "password"
+        };
+        const promise = userController.changeEmail(userEntityHolder, changeEmailRequest);
+        return expect(promise).rejects.toThrowError(UserAlreadyExistsError);
     });
 
     test("Change email", async () => {

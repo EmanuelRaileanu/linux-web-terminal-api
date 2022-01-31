@@ -2,9 +2,9 @@ import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../entities/db/user.entity";
-import { CreateUserRequest, SessionUserEntity } from "../entities/auth.entities";
+import { CreateUserRequest, SessionUserEntity, UserConflictReasons } from "../entities/auth.entities";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../entities/user.entities";
-import { PasswordsDoNotMatchError, UserNotFoundError, WrongPasswordError } from "../errors";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../errors";
 import * as bcrypt from "bcryptjs";
 import { Cache } from "cache-manager";
 
@@ -38,6 +38,10 @@ export class UserService {
     public async changeUsername(user: SessionUserEntity, changeUsernameRequest: ChangeUsernameRequest): Promise<void> {
         const { newUsername, password } = changeUsernameRequest;
         await this.validateUserPassword(user.id, password);
+        const existingUser = await this.findByUsername(newUsername);
+        if (existingUser) {
+            throw new UserAlreadyExistsError(UserConflictReasons.username);
+        }
         await this.usersRepository.update({ id: user.id }, { username: newUsername });
         await this.cacheManager.del(user.id);
     }
@@ -45,6 +49,10 @@ export class UserService {
     public async changeEmail(user: SessionUserEntity, changeEmailRequest: ChangeEmailRequest): Promise<void> {
         const { newEmail, password } = changeEmailRequest;
         await this.validateUserPassword(user.id, password);
+        const existingUser = await this.findByEmail(newEmail);
+        if (existingUser) {
+            throw new UserAlreadyExistsError(UserConflictReasons.email);
+        }
         await this.usersRepository.update({ id: user.id }, { email: newEmail });
         await this.cacheManager.del(user.id);
     }

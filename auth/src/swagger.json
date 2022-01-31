@@ -204,6 +204,16 @@
                                 }
                             }
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsernameAlreadyInUseResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -244,6 +254,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/WrongPasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EmailAlreadyInUseResponse"
                                 }
                             }
                         }
