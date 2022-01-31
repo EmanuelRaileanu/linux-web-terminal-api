@@ -26,7 +26,7 @@
                 "tags": [
                     "Authentication"
                 ],
-                "operationId": "AuthController_register",
+                "operationId": "AuthController.register",
                 "description": "Register",
                 "security": [],
                 "requestBody": {
@@ -78,7 +78,7 @@
                 "tags": [
                     "Authentication"
                 ],
-                "operationId": "AuthController_login",
+                "operationId": "AuthController.login",
                 "description": "Login",
                 "security": [],
                 "requestBody": {
@@ -134,16 +134,162 @@
                 }
             }
         },
-        "/api/v1/profile": {
+        "/api/v1/validate-token": {
             "get": {
                 "tags": [
-                    "Profile"
+                    "Authentication"
                 ],
-                "operationId": "AuthController_getProfile",
-                "description": "Get the current user's profile",
+                "operationId": "AuthController.validateToken",
+                "description": "Validate the token from the authorization header",
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidateTokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/change-username": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "AuthController.changeUsername",
+                "description": "Change the username for the currently logged in user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangeUsernameRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WrongPasswordResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/change-email": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "AuthController.changeEmail",
+                "description": "Change the email for the currently logged in user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangeEmailRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WrongPasswordResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/change-password": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "AuthController.changePassword",
+                "description": "Change the password for the currently logged in user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WrongPasswordResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -161,8 +307,8 @@
             "description": "Endpoints for authentication"
         },
         {
-            "name": "Profile",
-            "description": "Profile routes"
+            "name": "Users",
+            "description": "User routes"
         }
     ],
     "security": [
@@ -333,6 +479,87 @@
                     "error": {
                         "type": "string",
                         "example": "Not Found"
+                    }
+                }
+            },
+            "ValidateTokenResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "JohnWizard123"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "iat": {
+                        "type": "number",
+                        "example": 1643658138
+                    },
+                    "exp": {
+                        "type": "number",
+                        "example": 1643744538
+                    }
+                }
+            },
+            "UnauthorizedResponse": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 401
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "invalid token"
+                    }
+                }
+            },
+            "ChangeUsernameRequest": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "example": "password"
+                    },
+                    "newUsername": {
+                        "type": "string",
+                        "example": "HaloChief"
+                    }
+                }
+            },
+            "ChangeEmailRequest": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "example": "password"
+                    },
+                    "newEmail": {
+                        "type": "string",
+                        "format": "email"
+                    }
+                }
+            },
+            "ChangePasswordRequest": {
+                "type": "object",
+                "properties": {
+                    "currentPassword": {
+                        "type": "string",
+                        "example": "password"
+                    },
+                    "newPassword": {
+                        "type": "string",
+                        "example": "veryStrongPassword"
+                    },
+                    "confirmedNewPassword": {
+                        "type": "string",
+                        "example": "veryStrongPassword"
                     }
                 }
             }
