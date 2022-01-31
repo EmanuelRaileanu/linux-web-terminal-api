@@ -1,9 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseFilters, UseGuards } from "@nestjs/common";
 import { UserService } from "../services/user.service";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../entities/user.entities";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { UserEntityHolder } from "../entities/auth.entities";
+import { JwtExceptionFilter } from "../filters/jwt-exception.filter";
 
+@UseFilters(JwtExceptionFilter)
 @UseGuards(JwtAuthGuard)
 @Controller("api/v1/users")
 export class UserController {
