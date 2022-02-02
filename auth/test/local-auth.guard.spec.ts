@@ -9,7 +9,7 @@ import { config } from "../src/config";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { CacheModule } from "@nestjs/common";
-import { UserNotFoundError, WrongPasswordError } from "../src/errors";
+import { UserNotFoundError, WrongPasswordError } from "@shared/errors";
 import { getRepository, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
 

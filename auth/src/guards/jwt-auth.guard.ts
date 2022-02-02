@@ -1,10 +1,11 @@
 import { CACHE_MANAGER, ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
-import { SessionUserEntity } from "../entities/auth.entities";
+import { SessionUserEntity } from "@shared/entities";
 import { Cache } from "cache-manager";
-import { InvalidBearerTokenError, SessionExpiredError } from "../errors";
+import { SessionExpiredError } from "@shared/errors";
 import { JwtService } from "@nestjs/jwt";
+import { validateBearerToken } from "@shared/utils";
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard("jwt") {
@@ -18,22 +19,12 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
 
     public async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request = context.switchToHttp().getRequest();
-
         const bearerToken = request.headers.authorization;
-        if (!bearerToken) {
-            throw new InvalidBearerTokenError();
-        }
-        const splitToken = bearerToken.split(" ");
-        if (splitToken.length < 2) {
-            throw new InvalidBearerTokenError();
-        }
-        if (splitToken[0].toLowerCase() !== "bearer") {
-            throw new InvalidBearerTokenError();
-        }
+        const jwt = validateBearerToken(bearerToken);
 
-        const user = this.jwtService.verify<SessionUserEntity>(splitToken[1]);
+        const user = this.jwtService.verify<SessionUserEntity>(jwt);
         const cachedToken = await this.cacheManager.get<string>(user.id);
-        if (!cachedToken || cachedToken !== splitToken[1]) {
+        if (!cachedToken || cachedToken !== jwt) {
             throw new SessionExpiredError();
         }
 

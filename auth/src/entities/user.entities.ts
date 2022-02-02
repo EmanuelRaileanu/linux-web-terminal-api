@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
-import { Match, NotMatch } from "@utils";
+import { Match, NotMatch } from "@shared/utils";
 
 export class ChangeUsernameRequest {
     @IsNotEmpty()

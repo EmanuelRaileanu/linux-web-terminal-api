@@ -9,8 +9,8 @@ import * as bcrypt from "bcryptjs";
 import { CacheModule } from "@nestjs/common";
 import { UserService } from "../src/services/user.service";
 import { JwtModule } from "@nestjs/jwt";
-import { ValidateUserResponse } from "../src/entities/auth.entities";
-import { UserNotFoundError, WrongPasswordError } from "../src/errors";
+import { UserNotFoundError, WrongPasswordError } from "@shared/errors";
+import { ValidateUserResponse } from "@shared/entities";
 
 describe(LocalStrategy, () => {
     let user: User;

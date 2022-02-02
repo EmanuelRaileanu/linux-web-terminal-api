@@ -1,6 +1,6 @@
-import { bootstrapServer } from "@utils";
+import { bootstrapServer } from "@shared/utils";
 import { config } from "./config";
-import { AppModule } from "./app.module";
+import { VmManagerModule } from "./vm-manager.module";
 
-bootstrapServer(AppModule, config.serverPort)
+bootstrapServer(VmManagerModule, config.serverPort)
     .catch((err) => console.error("Error occurred when starting api service:", err));

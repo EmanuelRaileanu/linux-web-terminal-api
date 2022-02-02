@@ -2,11 +2,11 @@ import { Strategy } from "passport-local";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable } from "@nestjs/common";
 import { AuthService } from "../services/auth.service";
-import { ValidateUserResponse } from "../entities/auth.entities";
+import { ValidateUserResponse } from "@shared/entities";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-    constructor(private authService: AuthService) {
+    constructor(private readonly authService: AuthService) {
         super();
     }
 

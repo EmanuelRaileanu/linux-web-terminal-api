@@ -2,11 +2,11 @@ import { JwtAuthGuard } from "../src/guards/jwt-auth.guard";
 import { Test, TestingModule } from "@nestjs/testing";
 import { CACHE_MANAGER, CacheModule } from "@nestjs/common";
 import { Cache } from "cache-manager";
-import { ValidateUserResponse } from "../src/entities/auth.entities";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { config } from "../src/config";
-import { InvalidBearerTokenError, SessionExpiredError } from "../src/errors";
+import { InvalidBearerTokenError, SessionExpiredError } from "@shared/errors";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { ValidateUserResponse } from "@shared/entities";
 
 describe(JwtAuthGuard, () => {
     let user: ValidateUserResponse;

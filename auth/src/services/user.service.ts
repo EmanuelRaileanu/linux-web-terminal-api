@@ -2,11 +2,18 @@ import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../entities/db/user.entity";
-import { CreateUserRequest, SessionUserEntity, UserConflictReasons } from "../entities/auth.entities";
+import { CreateUserRequest } from "../entities/auth.entities";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../entities/user.entities";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../errors";
+import {
+    PasswordsDoNotMatchError,
+    UserAlreadyExistsError,
+    UserConflictReasons,
+    UserNotFoundError,
+    WrongPasswordError
+} from "@shared/errors";
 import * as bcrypt from "bcryptjs";
 import { Cache } from "cache-manager";
+import { SessionUserEntity } from "@shared/entities";
 
 @Injectable()
 export class UserService {

@@ -5,7 +5,11 @@ import {
     NotFoundException,
     UnauthorizedException
 } from "@nestjs/common";
-import { UserConflictReasons } from "./entities/auth.entities";
+
+export enum UserConflictReasons {
+    username = "username",
+    email = "email"
+}
 
 export class UserNotFoundError extends NotFoundException {
     constructor() {

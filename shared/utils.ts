@@ -11,6 +11,21 @@ import {
     ValidatorConstraintInterface
 } from "class-validator";
 import { ClassConstructor } from "class-transformer";
+import { InvalidBearerTokenError } from "@shared/errors";
+
+export const validateBearerToken = (bearerToken: string | undefined) => {
+    if (!bearerToken) {
+        throw new InvalidBearerTokenError();
+    }
+    const splitToken = bearerToken.split(" ");
+    if (splitToken.length < 2) {
+        throw new InvalidBearerTokenError();
+    }
+    if (splitToken[0].toLowerCase() !== "bearer") {
+        throw new InvalidBearerTokenError();
+    }
+    return splitToken[1];
+};
 
 const setupSwagger = (app: INestApplication, swaggerConfig: SwaggerConfig) => {
     if (!swaggerConfig.swaggerDoc) {
@@ -43,7 +58,7 @@ export const bootstrapServer = async (module: any, port: number, swaggerConfig?:
 export const Match = <T>(
     type: ClassConstructor<T>,
     property: (o: T) => any,
-    validationOptions?: ValidationOptions,
+    validationOptions?: ValidationOptions
 ) => {
     return (object: any, propertyName: string) => {
         registerDecorator({
@@ -72,7 +87,7 @@ export class MatchConstraint implements ValidatorConstraintInterface {
 export const NotMatch = <T>(
     type: ClassConstructor<T>,
     property: (o: T) => any,
-    validationOptions?: ValidationOptions,
+    validationOptions?: ValidationOptions
 ) => {
     return (object: any, propertyName: string) => {
         registerDecorator({

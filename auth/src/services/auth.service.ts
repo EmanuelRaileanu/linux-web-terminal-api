@@ -1,12 +1,19 @@
 import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
 import { Cache } from "cache-manager";
 import { UserService } from "./user.service";
-import { RegisterRequest, UserConflictReasons, ValidateUserResponse } from "../entities/auth.entities";
+import { RegisterRequest } from "../entities/auth.entities";
 import { JwtService } from "@nestjs/jwt";
 import { JwtResponse } from "../entities/jwt.entities";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../errors";
+import {
+    PasswordsDoNotMatchError,
+    UserAlreadyExistsError,
+    UserConflictReasons,
+    UserNotFoundError,
+    WrongPasswordError
+} from "@shared/errors";
 import * as bcrypt from "bcryptjs";
 import { config } from "../config";
+import { ValidateUserResponse } from "@shared/entities";
 
 @Injectable()
 export class AuthService {

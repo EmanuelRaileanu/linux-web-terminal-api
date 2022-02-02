@@ -8,3 +8,14 @@ export interface SwaggerConfig {
     path: string;
     swaggerDoc?: OpenAPIObject;
 }
+
+export interface ValidateUserResponse {
+    id: string;
+    username: string;
+    email: string;
+}
+
+export interface SessionUserEntity extends ValidateUserResponse {
+    iat?: number;
+    exp?: number;
+}

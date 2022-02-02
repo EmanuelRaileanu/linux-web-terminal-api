@@ -8,9 +8,10 @@ import { CacheModule } from "@nestjs/common";
 import * as bcrypt from "bcryptjs";
 import { UserController } from "../src/controllers/user.controller";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
-import { SessionUserEntity, UserEntityHolder } from "../src/entities/auth.entities";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../src/errors";
+import { UserEntityHolder } from "../src/entities/auth.entities";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
 import { JwtModule } from "@nestjs/jwt";
+import { SessionUserEntity } from "@shared/entities";
 
 describe(UserService, () => {
     let users: User[];

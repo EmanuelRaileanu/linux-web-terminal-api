@@ -1,7 +1,7 @@
-import { bootstrapServer } from "@utils";
+import { bootstrapServer } from "@shared/utils";
 import { config } from "./config";
 import { AuthModule } from "./modules/auth.module";
-import { SwaggerConfig } from "../../shared/entities";
+import { SwaggerConfig } from "@shared/entities";
 import * as swaggerDoc from "./swagger.json";
 import { OpenAPIObject } from "@nestjs/swagger";
 

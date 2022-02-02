@@ -14,7 +14,7 @@ import * as bcrypt from "bcryptjs";
 import { AuthController } from "../src/controllers/auth.controller";
 import { RegisterRequest, UserEntityHolder } from "../src/entities/auth.entities";
 import { JwtResponse } from "../src/entities/jwt.entities";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError } from "../src/errors";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError } from "@shared/errors";
 
 describe(AuthController, () => {
     let users: User[];

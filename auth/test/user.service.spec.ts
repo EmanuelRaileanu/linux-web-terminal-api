@@ -6,9 +6,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "../src/config";
 import { CacheModule } from "@nestjs/common";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
-import { SessionUserEntity } from "../src/entities/auth.entities";
 import * as bcrypt from "bcryptjs";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../src/errors";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
+import { SessionUserEntity } from "@shared/entities";
 
 describe(UserService, () => {
     let users: User[];

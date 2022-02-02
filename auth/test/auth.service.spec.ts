@@ -10,9 +10,10 @@ import { PassportModule } from "@nestjs/passport";
 import { LocalStrategy } from "../src/strategies/local.strategy";
 import { JwtStrategy } from "../src/strategies/jwt.strategy";
 import * as bcrypt from "bcryptjs";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "../src/errors";
-import { RegisterRequest, ValidateUserResponse } from "../src/entities/auth.entities";
+import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
+import { RegisterRequest } from "../src/entities/auth.entities";
 import { CacheModule } from "@nestjs/common";
+import { ValidateUserResponse } from "@shared/entities";
 
 describe(AuthService, () => {
     let users: User[];
