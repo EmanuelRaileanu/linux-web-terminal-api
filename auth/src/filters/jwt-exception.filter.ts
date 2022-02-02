@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from "@nestjs/common";
 import { Response } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
 
@@ -9,9 +9,9 @@ export class JwtExceptionFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response>();
 
         return response
-            .status(401)
+            .status(HttpStatus.UNAUTHORIZED)
             .json({
-                statusCode: 401,
+                statusCode: HttpStatus.UNAUTHORIZED,
                 message: exception.message
             });
     }
