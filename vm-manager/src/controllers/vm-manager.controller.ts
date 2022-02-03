@@ -5,5 +5,5 @@ import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 @UseGuards(JwtAuthGuard)
 @Controller("api/v1")
 export class VmManagerController {
-    constructor(private readonly authService: VmManagerService) {}
+    constructor(private readonly vmManagerService: VmManagerService) {}
 }

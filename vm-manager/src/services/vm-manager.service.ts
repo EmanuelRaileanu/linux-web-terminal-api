@@ -1,7 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { ExecutorService } from "./executor.service";
 
 @Injectable()
 export class VmManagerService {
-    constructor(private readonly executorService: ExecutorService) {}
+    public createVirtualMachine() {
+        return "127.0.0.1";
+    }
+
+    public destroyVirtualMachine() {
+        return "destroyed";
+    }
 }
