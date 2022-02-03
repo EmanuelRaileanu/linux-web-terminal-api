@@ -1,5 +1,5 @@
 import { JwtStrategy } from "../src/strategies/jwt.strategy";
-import { ValidateUserResponse } from "../src/entities/auth.entities";
+import { ValidateUserResponse } from "@shared/entities";
 
 describe(JwtStrategy, () => {
     let jwtStrategy: JwtStrategy;
