@@ -3,16 +3,16 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 @Entity("users")
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: string;
+    public id: string;
 
     @Column({ unique: true })
-    username: string;
+    public username: string;
 
     @Column({ unique: true })
-    email: string;
+    public email: string;
 
     @Column()
-    password: string;
+    public password: string;
 
     @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
     public createdAt: Date;
