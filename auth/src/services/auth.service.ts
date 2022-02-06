@@ -14,9 +14,10 @@ import {
 import * as bcrypt from "bcryptjs";
 import { config } from "../config";
 import { ValidateUserResponse } from "@shared/entities";
+import { IAuthService } from "../entities/IAuthService";
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
     constructor(
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly userService: UserService,

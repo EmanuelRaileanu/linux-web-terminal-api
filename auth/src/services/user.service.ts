@@ -14,9 +14,10 @@ import {
 import * as bcrypt from "bcryptjs";
 import { Cache } from "cache-manager";
 import { SessionUserEntity } from "@shared/entities";
+import { IUserService } from "../entities/IUserService";
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
     constructor(
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
