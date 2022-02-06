@@ -1,8 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { VmManagerController } from "../src/controllers/vm-manager.controller";
-import { VmManagerService } from "../src/services/vm-manager.service";
-import { ExecutorService } from "../src/services/executor.service";
+import { VirtInstallService } from "../src/services/virt-install.service";
 import { HttpModule } from "@nestjs/axios";
+import { IsoImageService } from "../src/services/iso-image.service";
+import { VirshService } from "../src/services/virsh.service";
+import { ExecService } from "../src/services/exec.service";
+import { VirtCloneService } from "../src/services/virt-clone.service";
 
 describe("AuthController", () => {
     let authController: VmManagerController;
@@ -11,7 +14,7 @@ describe("AuthController", () => {
         const app: TestingModule = await Test.createTestingModule({
             imports: [HttpModule],
             controllers: [VmManagerController],
-            providers: [VmManagerService, ExecutorService]
+            providers: [VirtInstallService, VirtCloneService, VirshService, IsoImageService, ExecService]
         }).compile();
 
         authController = app.get<VmManagerController>(VmManagerController);

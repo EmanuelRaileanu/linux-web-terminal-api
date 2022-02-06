@@ -104,7 +104,7 @@
             "@shared/entities": "<rootDir>/shared/entities",
             "@shared/errors": "<rootDir>/shared/errors"
         },
-        "coverageDirectory": "../coverage",
+        "coverageDirectory": "coverage",
         "testEnvironment": "node"
     }
 }
