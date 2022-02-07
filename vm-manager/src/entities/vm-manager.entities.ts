@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from "class-validator";
+import { IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from "class-validator";
 
 export class CreateVirtualMachineOptions {
     @IsNotEmpty()
@@ -43,6 +43,18 @@ export class CloneVirtualMachineOptions {
     @IsNotEmpty()
     @IsString()
     pathToOriginalVMVirtualHardDisks: string;
+}
+
+export class VmToggleParams {
+    @IsNotEmpty()
+    @IsString()
+    vmName: string;
+}
+
+export class VmShutDownQueryParams {
+    @IsOptional()
+    @IsBoolean()
+    forced?: boolean;
 }
 
 export interface ResponseFromStdout {
