@@ -12,6 +12,6 @@ export const config = {
     isoImageDirectoryPath: process.env.ISO_IMAGE_DIRECTORY_PATH || "/",
     https: {
         keyPath: process.env.PATH_TO_KEY || "/key.pem",
-        certPath: process.env.PATH_TOC_CERT || "/cert.pem"
+        certPath: process.env.PATH_TO_CERT || "/cert.pem"
     }
 };
