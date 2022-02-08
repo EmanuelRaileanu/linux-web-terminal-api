@@ -1,3 +1,7 @@
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 export const config = {
     serverPort: +(process.env.VM_MANAGER_SERVER_PORT || 8002),
     authService: {

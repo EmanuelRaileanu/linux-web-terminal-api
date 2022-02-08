@@ -1,3 +1,7 @@
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 export const config = {
     serverPort: +(process.env.API_SERVER_PORT || 8000),
     https: {
