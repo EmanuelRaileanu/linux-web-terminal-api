@@ -4,6 +4,7 @@ import { AuthModule } from "./modules/auth.module";
 import { SwaggerConfig } from "@shared/entities";
 import * as swaggerDoc from "./swagger.json";
 import { OpenAPIObject } from "@nestjs/swagger";
+import * as fs from "fs";
 
 const swaggerConfig: SwaggerConfig = {
     path: "api/v1/docs",
@@ -14,5 +15,10 @@ const swaggerConfig: SwaggerConfig = {
     swaggerDoc: swaggerDoc as OpenAPIObject
 };
 
-bootstrapServer(AuthModule, config.serverPort, swaggerConfig)
+const httpsOptions = {
+    key: fs.readFileSync(config.https.keyPath),
+    cert: fs.readFileSync(config.https.certPath)
+};
+
+bootstrapServer(AuthModule, config.serverPort, httpsOptions, swaggerConfig)
     .catch((err) => console.error("Error occurred when starting api service:", err));

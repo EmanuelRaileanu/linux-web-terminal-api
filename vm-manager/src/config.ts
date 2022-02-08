@@ -5,5 +5,9 @@ export const config = {
         validateTokenPath: process.env.AUTH_SERVICE_VALIDATE_TOKEN_PATH || "/validate-token"
     },
     libVirtDefaultUrl: process.env.LIBVIRT_DEFAULT_URL || "qemu:///system",
-    isoImageDirectoryPath: process.env.ISO_IMAGE_DIRECTORY_PATH || "/"
+    isoImageDirectoryPath: process.env.ISO_IMAGE_DIRECTORY_PATH || "/",
+    https: {
+        keyPath: process.env.PATH_TO_KEY || "/key.pem",
+        certPath: process.env.PATH_TOC_CERT || "/cert.pem"
+    }
 };

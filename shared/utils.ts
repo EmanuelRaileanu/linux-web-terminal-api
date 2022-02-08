@@ -12,6 +12,8 @@ import {
 } from "class-validator";
 import { ClassConstructor } from "class-transformer";
 import { InvalidBearerTokenError } from "@shared/errors";
+import { HttpsOptions } from "@nestjs/common/interfaces/external/https-options.interface";
+import * as dotenv from "dotenv";
 
 export const validateBearerToken = (bearerToken: string | undefined) => {
     if (!bearerToken) {
@@ -43,8 +45,9 @@ const setupSwagger = (app: INestApplication, swaggerConfig: SwaggerConfig) => {
     app.use(morgan("tiny"));
 };
 
-export const bootstrapServer = async (module: any, port: number, swaggerConfig?: SwaggerConfig) => {
-    const app = await NestFactory.create(module);
+export const bootstrapServer = async (module: any, port: number, httpsOptions?: HttpsOptions, swaggerConfig?: SwaggerConfig) => {
+    dotenv.config();
+    const app = await NestFactory.create(module, { httpsOptions });
 
     if (swaggerConfig) {
         setupSwagger(app, swaggerConfig);

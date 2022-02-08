@@ -15,5 +15,9 @@ export const config = {
     redis: {
         host: process.env.REDIS_HOST || "localhost",
         port: +(process.env.REDIS_PORT || 6379)
+    },
+    https: {
+        keyPath: process.env.PATH_TO_KEY || "/key.pem",
+        certPath: process.env.PATH_TOC_CERT || "/cert.pem"
     }
 };
