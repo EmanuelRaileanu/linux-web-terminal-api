@@ -14,7 +14,7 @@ import { ClassConstructor } from "class-transformer";
 import { InvalidBearerTokenError } from "@shared/errors";
 import { HttpsOptions } from "@nestjs/common/interfaces/external/https-options.interface";
 
-export const validateBearerToken = (bearerToken: string | undefined) => {
+export const validateBearerToken = (bearerToken: string | undefined): string => {
     if (!bearerToken) {
         throw new InvalidBearerTokenError();
     }
@@ -28,7 +28,7 @@ export const validateBearerToken = (bearerToken: string | undefined) => {
     return splitToken[1];
 };
 
-const setupSwagger = (app: INestApplication, swaggerConfig: SwaggerConfig) => {
+const setupSwagger = (app: INestApplication, swaggerConfig: SwaggerConfig): void => {
     if (!swaggerConfig.swaggerDoc) {
         const config = new DocumentBuilder()
             .setTitle(swaggerConfig.title)
@@ -44,7 +44,7 @@ const setupSwagger = (app: INestApplication, swaggerConfig: SwaggerConfig) => {
     app.use(morgan("tiny"));
 };
 
-export const bootstrapServer = async (module: any, port: number, httpsOptions?: HttpsOptions, swaggerConfig?: SwaggerConfig) => {
+export const bootstrapServer = async (module: any, port: number, httpsOptions?: HttpsOptions, swaggerConfig?: SwaggerConfig): Promise<void> => {
     const app = await NestFactory.create(module, { httpsOptions });
 
     if (swaggerConfig) {
