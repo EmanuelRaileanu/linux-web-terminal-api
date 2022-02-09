@@ -68,7 +68,7 @@ export class VirshService implements IVirshService {
             --snapshots-metadata
             --nvram
         `;
-        const { stdout, stderr } = await this.execService.run(destroyVirtualMachineCommand);
+        const { stdout, stderr } = await this.execService.run(destroyVirtualMachineCommand.trim());
         if (stderr) {
             throw new VirshUndefineError(stderr);
         }

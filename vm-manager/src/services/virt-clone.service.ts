@@ -16,7 +16,7 @@ export class VirtCloneService implements IVirtCloneService {
             --name=${options.name}
             --file=${options.pathToOriginalVMVirtualHardDisks}
         `;
-        const { stdout, stderr } = await this.execService.run(virtCloneCommand);
+        const { stdout, stderr } = await this.execService.run(virtCloneCommand.trim());
         if (stderr) {
             throw new VirtCloneError(stderr);
         }

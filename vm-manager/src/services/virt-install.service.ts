@@ -27,7 +27,7 @@ export class VirtInstallService implements IVirtInstallService {
             --graphics none
             --network bridge=${options.networkBridgeInterfaceName || "default"}
         `;
-        const { stdout, stderr } = await this.execService.run(virtInstallCommand);
+        const { stdout, stderr } = await this.execService.run(virtInstallCommand.trim());
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
