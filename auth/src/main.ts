@@ -4,7 +4,7 @@ import { AuthModule } from "./modules/auth.module";
 import { SwaggerConfig } from "@shared/entities";
 import * as swaggerDoc from "./swagger.json";
 import { OpenAPIObject } from "@nestjs/swagger";
-import * as fs from "fs";
+import { readFileSync } from "fs";
 
 const swaggerConfig: SwaggerConfig = {
     path: "api/v1/docs",
@@ -16,8 +16,8 @@ const swaggerConfig: SwaggerConfig = {
 };
 
 const httpsOptions = config.ssl.enabled ? {
-    key: fs.readFileSync(config.ssl.keyPath),
-    cert: fs.readFileSync(config.ssl.certPath)
+    key: readFileSync(config.ssl.keyPath),
+    cert: readFileSync(config.ssl.certPath)
 } : undefined;
 
 bootstrapServer(AuthModule, config.serverPort, httpsOptions, swaggerConfig)
