@@ -16,17 +16,17 @@ export class VirtInstallService implements IVirtInstallService {
 
     public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
         const virtInstallCommand = `virt-install \
-        --name=${options.name}
-            --vcpus=${options.numberOfVirtualCpus}
-            --memory=${options.memory}
-            --os-type=linux
-            --os-variant=${options.osVariant}
-            --virt-type=kvm
-            --disk size=${options.diskSize}
-            --connect=${config.libVirtDefaultUrl}
-            --cdrom=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)},bus=virtio,format=raw,cache=none,io=native
-            --graphics none
-            --network bridge=${options.networkBridgeInterfaceName || "default"}
+            --name=${options.name} \
+            --vcpus=${options.numberOfVirtualCpus} \
+            --memory=${options.memory} \
+            --os-type=linux \
+            --os-variant=${options.osVariant} \
+            --virt-type=kvm \
+            --disk size=${options.diskSize} \
+            --connect=${config.libVirtDefaultUrl} \
+            --cdrom=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)},bus=virtio,format=raw,cache=none,io=native \
+            --graphics none \
+            --network bridge=${options.networkBridgeInterfaceName || "default"}\
         `;
         const { stdout, stderr } = await this.execService.run(formatCommand(virtInstallCommand));
         if (stderr) {
