@@ -3,11 +3,13 @@ import { ExecService } from "./exec.service";
 import {
     VirshForcedShutDownError,
     VirshListAllVirtualMachinesError,
-    VirshShutDownError, VirshStartError,
+    VirshShutDownError,
+    VirshStartError,
     VirshUndefineError
 } from "../errors";
 import { IVirshService } from "../entities/IVirshService";
 import { ResponseFromStdout } from "../entities/vm-manager.entities";
+import { formatCommand } from "@shared/utils";
 
 @Injectable()
 export class VirshService implements IVirshService {
@@ -68,7 +70,7 @@ export class VirshService implements IVirshService {
             --snapshots-metadata
             --nvram
         `;
-        const { stdout, stderr } = await this.execService.run(destroyVirtualMachineCommand.trim());
+        const { stdout, stderr } = await this.execService.run(formatCommand(destroyVirtualMachineCommand));
         if (stderr) {
             throw new VirshUndefineError(stderr);
         }

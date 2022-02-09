@@ -14,6 +14,10 @@ import { ClassConstructor } from "class-transformer";
 import { InvalidBearerTokenError } from "@shared/errors";
 import { HttpsOptions } from "@nestjs/common/interfaces/external/https-options.interface";
 
+export const formatCommand = (command: string): string => {
+    return command.trim().replace(/\t/g, "");
+};
+
 export const validateBearerToken = (bearerToken: string | undefined): string => {
     if (!bearerToken) {
         throw new InvalidBearerTokenError();

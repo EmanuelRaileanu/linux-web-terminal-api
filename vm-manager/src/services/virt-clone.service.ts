@@ -3,6 +3,7 @@ import { CloneVirtualMachineOptions, ResponseFromStdout } from "../entities/vm-m
 import { VirtCloneError } from "../errors";
 import { ExecService } from "./exec.service";
 import { IVirtCloneService } from "../entities/IVirtCloneService";
+import { formatCommand } from "@shared/utils";
 
 @Injectable()
 export class VirtCloneService implements IVirtCloneService {
@@ -16,7 +17,7 @@ export class VirtCloneService implements IVirtCloneService {
             --name=${options.name}
             --file=${options.pathToOriginalVMVirtualHardDisks}
         `;
-        const { stdout, stderr } = await this.execService.run(virtCloneCommand.trim());
+        const { stdout, stderr } = await this.execService.run(formatCommand(virtCloneCommand));
         if (stderr) {
             throw new VirtCloneError(stderr);
         }

@@ -5,6 +5,7 @@ import { IsoImageService } from "./iso-image.service";
 import { VirtInstallError } from "../errors";
 import { IVirtInstallService } from "../entities/IVirtInstallService";
 import { ExecService } from "./exec.service";
+import { formatCommand } from "@shared/utils";
 
 @Injectable()
 export class VirtInstallService implements IVirtInstallService {
@@ -14,8 +15,8 @@ export class VirtInstallService implements IVirtInstallService {
     ) {}
 
     public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
-        const virtInstallCommand = `virt-install
-            --name=${options.name}
+        const virtInstallCommand = `virt-install \
+        --name=${options.name}
             --vcpus=${options.numberOfVirtualCpus}
             --memory=${options.memory}
             --os-type=linux
@@ -27,7 +28,7 @@ export class VirtInstallService implements IVirtInstallService {
             --graphics none
             --network bridge=${options.networkBridgeInterfaceName || "default"}
         `;
-        const { stdout, stderr } = await this.execService.run(virtInstallCommand.trim());
+        const { stdout, stderr } = await this.execService.run(formatCommand(virtInstallCommand));
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
