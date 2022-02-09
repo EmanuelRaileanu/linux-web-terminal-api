@@ -24,7 +24,7 @@ export class VirtInstallService implements IVirtInstallService {
             --virt-type=kvm \
             --disk size=${options.diskSize} \
             --connect=${config.libVirtDefaultUrl} \
-            --cdrom=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)},bus=virtio,format=raw,cache=none,io=native \
+            --cdrom=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)} \
             --graphics none \
             --network bridge=${options.networkBridgeInterfaceName || "default"}\
         `;
