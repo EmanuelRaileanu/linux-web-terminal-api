@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from "class-validator";
+import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from "class-validator";
 
 export class CreateVirtualMachineOptions {
     @IsNotEmpty()
@@ -53,8 +53,8 @@ export class VmToggleParams {
 
 export class VmShutDownQueryParams {
     @IsOptional()
-    @IsBoolean()
-    forced?: boolean;
+    @IsNumber()
+    forced?: number;
 }
 
 export interface ResponseFromStdout {
