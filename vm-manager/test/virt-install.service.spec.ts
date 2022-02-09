@@ -14,7 +14,7 @@ describe(VirtInstallService, () => {
 
     beforeAll(async () => {
         process.chdir(__dirname);
-        config.isoImageDirectoryPath = __dirname;
+        config.isoImagesDirectoryPath = __dirname;
 
         moduleRef = await Test.createTestingModule({
             providers: [VirtInstallService, ExecService, IsoImageService]

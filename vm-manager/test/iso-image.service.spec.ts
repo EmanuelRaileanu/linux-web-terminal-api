@@ -9,7 +9,7 @@ describe(IsoImageService, () => {
 
     beforeAll(async () => {
         process.chdir(__dirname);
-        config.isoImageDirectoryPath = __dirname;
+        config.isoImagesDirectoryPath = __dirname;
         isoImageService = new IsoImageService();
         isoImages = ["image1.iso", "image2.iso"];
         return Promise.all(isoImages.map(image => writeFile(image, "")));

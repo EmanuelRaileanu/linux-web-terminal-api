@@ -8,7 +8,7 @@ import { IIsoImageService } from "../entities/IIsoImageService";
 export class IsoImageService implements IIsoImageService {
     private static async checkIfImageExistsOnDisk(isoImage: string): Promise<boolean> {
         try {
-            await access(`${config.isoImageDirectoryPath}/${isoImage}`);
+            await access(`${config.isoImagesDirectoryPath}/${isoImage}`);
             return true;
         } catch (err) {
             return false;
@@ -16,7 +16,7 @@ export class IsoImageService implements IIsoImageService {
     }
 
     public async getAvailableIsoImages(): Promise<string[]> {
-        const files = await readdir(config.isoImageDirectoryPath);
+        const files = await readdir(config.isoImagesDirectoryPath);
         return files.filter(file => file.endsWith(".iso"));
     }
 
@@ -24,6 +24,6 @@ export class IsoImageService implements IIsoImageService {
         if (!await IsoImageService.checkIfImageExistsOnDisk(isoImage)) {
             throw new IsoImageNotFoundError();
         }
-        return `${config.isoImageDirectoryPath}/${isoImage}`;
+        return `${config.isoImagesDirectoryPath}/${isoImage}`;
     }
 }
