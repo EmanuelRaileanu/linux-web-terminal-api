@@ -49,7 +49,7 @@ export class VmManagerController {
 
     @Get("virtual-machines/:vmName/shutdown")
     public shutdown(@Param() params: VmToggleParams, @Query() query: VmShutDownQueryParams): Promise<ResponseFromStdout> {
-        return query.forced
+        return query.forced && !!+query.forced
             ? this.virshService.forcefullyShutDownVirtualMachine(params.vmName)
             : this.virshService.shutDownVirtualMachine(params.vmName);
     }

@@ -53,8 +53,8 @@ export class VmToggleParams {
 
 export class VmShutDownQueryParams {
     @IsOptional()
-    @IsNumber()
-    forced?: number;
+    @IsString()
+    forced?: string;
 }
 
 export interface ResponseFromStdout {
