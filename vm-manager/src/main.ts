@@ -3,10 +3,10 @@ import { config } from "./config";
 import { VmManagerModule } from "./vm-manager.module";
 import fs from "fs";
 
-const httpsOptions = {
-    key: fs.readFileSync(config.https.keyPath),
-    cert: fs.readFileSync(config.https.certPath)
-};
+const httpsOptions = config.ssl.enabled ? {
+    key: fs.readFileSync(config.ssl.keyPath),
+    cert: fs.readFileSync(config.ssl.certPath)
+} : undefined;
 
 bootstrapServer(VmManagerModule, config.serverPort, httpsOptions)
     .catch((err) => console.error("Error occurred when starting api service:", err));

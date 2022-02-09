@@ -20,7 +20,8 @@ export const config = {
         host: process.env.REDIS_HOST || "localhost",
         port: +(process.env.REDIS_PORT || 6379)
     },
-    https: {
+    ssl: {
+        enabled: process.env.SSL_ENABLED === "true" || false,
         keyPath: process.env.PATH_TO_KEY || "/key.pem",
         certPath: process.env.PATH_TO_CERT || "/cert.pem"
     }

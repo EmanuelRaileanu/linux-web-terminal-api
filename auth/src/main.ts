@@ -15,10 +15,10 @@ const swaggerConfig: SwaggerConfig = {
     swaggerDoc: swaggerDoc as OpenAPIObject
 };
 
-const httpsOptions = {
-    key: fs.readFileSync(config.https.keyPath),
-    cert: fs.readFileSync(config.https.certPath)
-};
+const httpsOptions = config.ssl.enabled ? {
+    key: fs.readFileSync(config.ssl.keyPath),
+    cert: fs.readFileSync(config.ssl.certPath)
+} : undefined;
 
 bootstrapServer(AuthModule, config.serverPort, httpsOptions, swaggerConfig)
     .catch((err) => console.error("Error occurred when starting api service:", err));

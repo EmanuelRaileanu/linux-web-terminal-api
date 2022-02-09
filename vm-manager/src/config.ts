@@ -10,7 +10,8 @@ export const config = {
     },
     libVirtDefaultUrl: process.env.LIBVIRT_DEFAULT_URL || "qemu:///system",
     isoImageDirectoryPath: process.env.ISO_IMAGE_DIRECTORY_PATH || "/",
-    https: {
+    ssl: {
+        enabled: process.env.SSL_ENABLED === "true" || false,
         keyPath: process.env.PATH_TO_KEY || "/key.pem",
         certPath: process.env.PATH_TO_CERT || "/cert.pem"
     }
