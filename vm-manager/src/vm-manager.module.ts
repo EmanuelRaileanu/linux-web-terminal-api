@@ -6,10 +6,18 @@ import { IsoImageService } from "./services/iso-image.service";
 import { VirshService } from "./services/virsh.service";
 import { ExecService } from "./services/exec.service";
 import { VirtCloneService } from "./services/virt-clone.service";
+import { TimezoneService } from "./services/timezone.service";
 
 @Module({
     imports: [HttpModule],
     controllers: [VmManagerController],
-    providers: [VirtInstallService, VirtCloneService, VirshService, IsoImageService, ExecService]
+    providers: [
+        VirtInstallService,
+        VirtCloneService,
+        VirshService,
+        IsoImageService,
+        TimezoneService,
+        ExecService
+    ]
 })
 export class VmManagerModule {}

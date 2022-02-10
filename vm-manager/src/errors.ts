@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { ConflictException, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 
 export class IsoImageNotFoundError extends NotFoundException {
     constructor() {
@@ -51,5 +51,23 @@ export class VirshForcedShutDownError extends VirshError {
 export class VirshUndefineError extends VirshError {
     constructor(errorMessage: string) {
         super("undefine", errorMessage);
+    }
+}
+
+export class TimezoneServiceError extends InternalServerErrorException {
+    constructor(errorMessage: string) {
+        super("timedatectl error: " + errorMessage);
+    }
+}
+
+export class TimezoneNotFoundError extends NotFoundException {
+    constructor(timezone: string) {
+        super(`Timezone ${timezone} wasn't found on the system`);
+    }
+}
+
+export class TimezoneMatchesMultipleItems extends ConflictException {
+    constructor(timezone: string, foundTimezones: string[]) {
+        super(`${timezone} matches multiple items: ${foundTimezones}`);
     }
 }

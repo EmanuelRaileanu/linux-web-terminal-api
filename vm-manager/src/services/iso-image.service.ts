@@ -24,6 +24,6 @@ export class IsoImageService implements IIsoImageService {
         if (!await IsoImageService.checkIfImageExistsOnDisk(isoImage)) {
             throw new IsoImageNotFoundError();
         }
-        return `${config.isoImagesDirectoryPath}/${isoImage}`;
+        return `${config.isoImagesUri || config.isoImagesDirectoryPath}/${isoImage}`;
     }
 }

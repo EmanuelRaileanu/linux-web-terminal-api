@@ -11,6 +11,7 @@ import {
 import { VirtCloneService } from "../services/virt-clone.service";
 import { VirshService } from "../services/virsh.service";
 import { IsoImageService } from "../services/iso-image.service";
+import { TimezoneService } from "../services/timezone.service";
 
 @UseGuards(JwtAuthGuard)
 @Controller("api/v1")
@@ -19,12 +20,18 @@ export class VmManagerController {
         private readonly virtInstallService: VirtInstallService,
         private readonly virtCloneService: VirtCloneService,
         private readonly isoImageService: IsoImageService,
+        private readonly timezoneService: TimezoneService,
         private readonly virshService: VirshService
     ) {}
 
     @Get("iso-images")
     public getAvailableIsoImages(): Promise<string[]> {
         return this.isoImageService.getAvailableIsoImages();
+    }
+
+    @Get("timezones")
+    public getAllTimezones(): Promise<string[]> {
+        return this.timezoneService.getAllTimezones();
     }
 
     @Post("virtual-machines")

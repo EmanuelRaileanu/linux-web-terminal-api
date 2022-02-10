@@ -5,6 +5,18 @@ export class CreateVirtualMachineOptions {
     @IsString()
     name: string;
 
+    @IsNotEmpty()
+    @IsString()
+    username: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password: string;
+
+    @IsNotEmpty()
+    @IsString()
+    timezone: string;
+
     @IsDefined()
     @IsNumber()
     numberOfVirtualCpus: number;
@@ -28,7 +40,7 @@ export class CreateVirtualMachineOptions {
 
     @IsOptional()
     @IsString()
-    networkBridgeInterfaceName?: string;
+    networkInterface?: string;
 }
 
 export class CloneVirtualMachineOptions {
@@ -65,6 +77,13 @@ export interface ResponseFromStdout {
 export interface ExecResponse {
     stdout: string;
     stderr: string;
+}
+
+export interface KickStartFileTemplateParameters {
+    networkInterface: string;
+    timezone: string;
+    username: string;
+    password: string;
 }
 
 export type PromisifiedExecFunction = (command: string) => Promise<ExecResponse>;

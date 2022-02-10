@@ -1,20 +1,43 @@
 import { Injectable } from "@nestjs/common";
-import { CreateVirtualMachineOptions, ResponseFromStdout } from "../entities/vm-manager.entities";
+import {
+    CreateVirtualMachineOptions,
+    KickStartFileTemplateParameters,
+    ResponseFromStdout
+} from "../entities/vm-manager.entities";
 import { config } from "../config";
 import { IsoImageService } from "./iso-image.service";
 import { VirtInstallError } from "../errors";
 import { IVirtInstallService } from "../entities/IVirtInstallService";
 import { ExecService } from "./exec.service";
 import { formatCommand } from "@shared/utils";
+import { writeFile, unlink } from "fs/promises";
+import { v4 as uuid } from "uuid";
+import { renderFile } from "template-file";
+import { TimezoneService } from "./timezone.service";
 
 @Injectable()
 export class VirtInstallService implements IVirtInstallService {
     constructor(
         private readonly isoImageService: IsoImageService,
+        private readonly timezoneService: TimezoneService,
         private readonly execService: ExecService
     ) {}
 
+    private static async createKickstartFile(options: KickStartFileTemplateParameters): Promise<string> {
+        const templateFilePath = __dirname + "/../os-install-template.ks";
+        const fileName = uuid() + ".ks";
+        await writeFile(fileName, await renderFile(templateFilePath, options as any));
+        return __dirname + "/" + fileName;
+    }
+
     public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
+        const kickStarterFileParameters = {
+            networkInterface: options.networkInterface || config.defaultNetworkInterface,
+            timezone: await this.timezoneService.validateTimezone(options.timezone),
+            username: options.username,
+            password: options.password
+        };
+        const kickstartFilePath = await VirtInstallService.createKickstartFile(kickStarterFileParameters);
         const virtInstallCommand = `virt-install \
             --name=${options.name} \
             --vcpus=${options.numberOfVirtualCpus} \
@@ -24,14 +47,17 @@ export class VirtInstallService implements IVirtInstallService {
             --virt-type=kvm \
             --disk size=${options.diskSize} \
             --connect=${config.libVirtDefaultUrl} \
-            --cdrom=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)} \
+            --location=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)} \
             --graphics none \
-            --network bridge=${options.networkBridgeInterfaceName || "default"}\
+            --network bridge=${options.networkInterface || config.defaultNetworkInterface} \
+            --extra-args='ks=file:/${kickstartFilePath} console=ttyS0'\
         `;
         const { stdout, stderr } = await this.execService.run(formatCommand(virtInstallCommand));
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
+        unlink(kickstartFilePath).catch(err => console.log("Unlink error:", err));
+        // TODO: The local ip of the vm needs to be returned as well
         return {
             message: "VM created successfully",
             consoleOutput: stdout
