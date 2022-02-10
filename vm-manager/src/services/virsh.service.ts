@@ -21,7 +21,7 @@ export class VirshService implements IVirshService {
         if (stderr) {
             throw new VirshListAllVirtualMachinesError(stderr);
         }
-        return stdout.split("\n");
+        return stdout.split("\n").filter(vm => vm !== "");
     }
 
     public async startVirtualMachine(vmName: string): Promise<ResponseFromStdout> {
