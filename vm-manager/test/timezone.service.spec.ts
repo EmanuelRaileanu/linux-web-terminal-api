@@ -1,7 +1,7 @@
 import { TimezoneService } from "../src/services/timezone.service";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ExecService } from "../src/services/exec.service";
-import { TimezoneMatchesMultipleItems } from "../src/errors";
+import { TimezoneNotFoundError } from "../src/errors";
 
 describe(TimezoneService, () => {
     let moduleRef: TestingModule;
@@ -30,8 +30,8 @@ describe(TimezoneService, () => {
             return expect(timezoneService.validateTimezone(timezone)).resolves.toEqual(timezone);
         });
 
-        test("Validating timezone rejects with TimezoneMatchesMultipleItems when not being specific enough", () => {
-            return expect(timezoneService.validateTimezone("Europe")).rejects.toThrowError(TimezoneMatchesMultipleItems);
+        test("Validating timezone rejects with TimezoneNotFoundError when the timezone doesn't exist on the os", () => {
+            return expect(timezoneService.validateTimezone("Europe")).rejects.toThrowError(TimezoneNotFoundError);
         });
     } else {
         test("Test suite only supported on linux", () => {

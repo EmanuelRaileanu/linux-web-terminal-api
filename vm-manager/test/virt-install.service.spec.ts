@@ -26,7 +26,7 @@ describe(VirtInstallService, () => {
         timezoneService = moduleRef.get<TimezoneService>(TimezoneService);
 
         jest.spyOn(timezoneService, "validateTimezone")
-            .mockImplementation((timezone: string) => Promise.resolve(timezone));
+            .mockImplementation(timezone => Promise.resolve(timezone));
 
         return await writeFile(ISO_IMAGE_NAME, "");
     });

@@ -5,17 +5,25 @@ import { TimezoneMatchesMultipleItems, TimezoneNotFoundError, TimezoneServiceErr
 
 @Injectable()
 export class TimezoneService implements ITimezoneService {
+    private timezones: string[] = [];
+
     constructor(private readonly execService: ExecService) {}
 
     public async getAllTimezones(): Promise<string[]> {
+        if (this.timezones) {
+            return this.timezones;
+        }
         const { stdout, stderr } = await this.execService.run("timedatectl list-timezones");
         if (stderr) {
             throw new TimezoneServiceError(stderr);
         }
-        return stdout.split("\n").filter(tz => tz !== "");
+        return this.timezones = stdout.split("\n").filter(tz => tz !== "");
     }
 
     public async validateTimezone(timezone: string): Promise<string> {
+        if (this.timezones.length) {
+            return this.validateCachedTimezone(timezone);
+        }
         const { stdout, stderr } = await this.execService.run("timedatectl list-timezones | grep " + timezone);
         if (stderr) {
             throw new TimezoneServiceError(stderr);
@@ -30,4 +38,10 @@ export class TimezoneService implements ITimezoneService {
         return timezones[0];
     }
 
+    private validateCachedTimezone(timezone: string): string {
+        if (!this.timezones.includes(timezone)) {
+            throw new TimezoneNotFoundError(timezone);
+        }
+        return timezone;
+    }
 }
