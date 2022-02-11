@@ -17,7 +17,7 @@ export class ExecService implements IExecService {
         try {
             result = await this.promisifiedExec(command);
         } catch (err) {
-            result = { stderr: err, stdout: "" };
+            result = { stderr: err.stderr, stdout: "" };
         }
         return result;
     }
