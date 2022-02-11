@@ -35,7 +35,11 @@ describe(VirtInstallService, () => {
         await unlink(ISO_IMAGE_NAME);
         const filesInCurrentFolder = await readdir(__dirname);
         // Delete .ks files that were created before virt-install in the current directory
-        await Promise.all(filesInCurrentFolder.map(file => file.endsWith(".ks") && unlink(file)));
+        await Promise.all(filesInCurrentFolder.map(file => {
+            try {
+                file.endsWith(".ks") && unlink(file);
+            } catch {} // Probably throws ENOENT: no such file or directory, which is ok, means it was already deleted
+        }));
         return moduleRef.close();
     });
 
