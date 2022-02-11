@@ -10,7 +10,7 @@ export class TimezoneService implements ITimezoneService {
     constructor(private readonly execService: ExecService) {}
 
     public async getAllTimezones(): Promise<string[]> {
-        if (this.timezones) {
+        if (this.timezones.length) {
             return this.timezones;
         }
         const { stdout, stderr } = await this.execService.run("timedatectl list-timezones");
@@ -36,6 +36,10 @@ export class TimezoneService implements ITimezoneService {
             throw new TimezoneMatchesMultipleItems(timezone, timezones);
         }
         return timezones[0];
+    }
+
+    public clearCachedTimezones(): void {
+        this.timezones = [];
     }
 
     private validateCachedTimezone(timezone: string): string {
