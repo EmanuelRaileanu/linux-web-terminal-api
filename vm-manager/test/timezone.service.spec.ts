@@ -30,7 +30,7 @@ describe(TimezoneService, () => {
             return expect(timezoneService.validateTimezone(timezone)).resolves.toEqual(timezone);
         });
 
-        test("Validation timezone rejects with TimezoneMatchesMultipleItems when not being specific enough", () => {
+        test("Validating timezone rejects with TimezoneMatchesMultipleItems when not being specific enough", () => {
             return expect(timezoneService.validateTimezone("Europe")).rejects.toThrowError(TimezoneMatchesMultipleItems);
         });
     } else {
