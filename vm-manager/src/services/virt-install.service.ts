@@ -54,7 +54,8 @@ export class VirtInstallService implements IVirtInstallService {
             --location=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)} \
             --graphics none \
             --network bridge=${options.networkInterface || config.defaultNetworkInterface} \
-            --extra-args="ks=${kickstartFileUrl} console=ttyS0 console=ttyS0,115200"\
+            --extra-args="ks=${kickstartFileUrl} console=ttyS0 console=ttyS0,115200" \
+            --noautoconsole\
         `;
         const { stdout, stderr } = await this.execService.run(formatCommand(virtInstallCommand));
         if (stderr) {
