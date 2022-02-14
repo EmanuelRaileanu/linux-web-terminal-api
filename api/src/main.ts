@@ -9,4 +9,4 @@ const httpsOptions = config.ssl.enabled ? {
 } : undefined;
 
 bootstrapServer(AppModule, config.serverPort, httpsOptions)
-    .catch((err) => console.error("Error occurred when starting api service:", err));
+    .catch(err => console.error("Error occurred when starting the api service:", err));

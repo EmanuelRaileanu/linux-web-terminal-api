@@ -21,4 +21,4 @@ const httpsOptions = config.ssl.enabled ? {
 } : undefined;
 
 bootstrapServer(AuthModule, config.serverPort, httpsOptions, swaggerConfig)
-    .catch((err) => console.error("Error occurred when starting api service:", err));
+    .catch(err => console.error("Error occurred when starting the auth service:", err));

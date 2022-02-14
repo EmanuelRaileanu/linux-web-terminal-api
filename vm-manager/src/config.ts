@@ -4,13 +4,13 @@ dotenv.config();
 
 export const config = {
     serverPort: +(process.env.VM_MANAGER_SERVER_PORT || 8002),
+    internalStaticServerPort: +(process.env.INTERNAL_STATIC_SERVER_PORT || 8999),
     authService: {
         url: process.env.AUTH_SERVICE_URL || "http://localhost:8001/api/v1",
         validateTokenPath: process.env.AUTH_SERVICE_VALIDATE_TOKEN_PATH || "/validate-token"
     },
-    defaultNetworkInterface: process.env.DEFAULT_NETWORK_INTERFACE || "eth0",
-    libVirtDefaultUrl: process.env.LIBVIRT_DEFAULT_URL || "qemu:///system",
-    isoImagesUri: process.env.ISO_IMAGES_HOST || undefined,
+    defaultNetworkInterface: process.env.DEFAULT_NETWORK_INTERFACE || "virbr0",
+    libVirtUrl: process.env.LIBVIRT_URL || "qemu:///system",
     isoImagesDirectoryPath: process.env.ISO_IMAGES_DIRECTORY_PATH || "/",
     ssl: {
         enabled: process.env.SSL_ENABLED === "true" || false,
