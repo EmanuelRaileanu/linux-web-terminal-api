@@ -29,7 +29,7 @@ export class VirtInstallService implements IVirtInstallService {
     private static async createKickstartFile(options: KickStartFileTemplateParameters): Promise<string> {
         const templateFilePath = __dirname + "/../os-install-template.ks";
         const fileName = uuid() + ".ks";
-        await writeFile(this.PUBLIC_DIRECTORY_PATH, await renderFile(templateFilePath, options as any));
+        await writeFile(this.PUBLIC_DIRECTORY_PATH + "/" + fileName, await renderFile(templateFilePath, options as any));
         const schema = config.ssl.enabled ? "http://" : "https://";
         return `${schema}${ip.address()}${config.internalStaticServerPort}/${fileName}`;
     }
