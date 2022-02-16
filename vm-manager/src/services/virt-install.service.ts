@@ -10,15 +10,16 @@ import { VirtInstallError } from "../errors";
 import { IVirtInstallService } from "../entities/IVirtInstallService";
 import { ExecService } from "./exec.service";
 import { formatCommand } from "@shared/utils";
-import { writeFile, unlink } from "fs/promises";
+import { unlink, writeFile } from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { renderFile } from "template-file";
 import { TimezoneService } from "./timezone.service";
 import * as ip from "ip";
+import { join } from "path";
 
 @Injectable()
 export class VirtInstallService implements IVirtInstallService {
-    private static readonly PUBLIC_DIRECTORY_PATH = __dirname + "/../../../../public";
+    private static readonly PUBLIC_DIRECTORY_PATH = join(__dirname, "../../..", "public");
 
     constructor(
         private readonly isoImageService: IsoImageService,
@@ -27,15 +28,18 @@ export class VirtInstallService implements IVirtInstallService {
     ) {}
 
     private static async createKickstartFile(options: KickStartFileTemplateParameters): Promise<string> {
-        const templateFilePath = __dirname + "/../os-install-template.ks";
+        const ksTemplateFilePath = join(config.ksFilesDirectoryPath, options.ksFileName);
         const fileName = uuid() + ".ks";
-        await writeFile(this.PUBLIC_DIRECTORY_PATH + "/" + fileName, await renderFile(templateFilePath, options as any));
+        const filePath = VirtInstallService.PUBLIC_DIRECTORY_PATH + "/" + fileName;
+        await writeFile(filePath, await renderFile(ksTemplateFilePath, options as any));
         const schema = config.ssl.enabled ? "http://" : "https://";
         return `${schema}${ip.address()}${config.internalStaticServerPort}/${fileName}`;
     }
 
     public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
-        const kickStarterFileParameters = {
+        const os = await this.isoImageService.getIsoImageOsEntry(options.isoImage);
+        const kickStarterFileParameters: KickStartFileTemplateParameters = {
+            ksFileName: os.ksFileName,
             networkInterface: options.networkInterface || config.defaultNetworkInterface,
             timezone: await this.timezoneService.validateTimezone(options.timezone),
             username: options.username,
@@ -51,7 +55,7 @@ export class VirtInstallService implements IVirtInstallService {
             --virt-type=kvm \
             --disk size=${options.diskSize} \
             --connect=${config.libVirtUrl} \
-            --location=${await this.isoImageService.getIsoImageAbsolutePath(options.isoImage)} \
+            --location=${os.isoFileName} \
             --graphics none \
             --network bridge=${options.networkInterface || config.defaultNetworkInterface} \
             --extra-args="ks=${kickstartFileUrl} console=ttyS0 console=ttyS0,115200" \

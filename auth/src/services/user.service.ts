@@ -1,7 +1,7 @@
 import { CACHE_MANAGER, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User } from "../entities/db/user.entity";
+import { User } from "@shared/db-entities/user.entity";
 import { CreateUserRequest } from "../entities/auth.entities";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../entities/user.entities";
 import {

@@ -1,4 +1,4 @@
-import { User } from "./db/user.entity";
+import { User } from "@shared/db-entities/user.entity";
 import { CreateUserRequest } from "./auth.entities";
 import { SessionUserEntity } from "@shared/entities";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "./user.entities";

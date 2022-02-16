@@ -2,7 +2,7 @@ import { ConflictException, InternalServerErrorException, NotFoundException } fr
 
 export class IsoImageNotFoundError extends NotFoundException {
     constructor() {
-        super("Iso image not found on disk");
+        super("Iso image not found");
     }
 }
 

@@ -1,5 +1,5 @@
 import { AuthService } from "../src/services/auth.service";
-import { User } from "../src/entities/db/user.entity";
+import { User } from "@shared/db-entities/user.entity";
 import { getRepository, Repository } from "typeorm";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -15,6 +15,7 @@ import { AuthController } from "../src/controllers/auth.controller";
 import { RegisterRequest, UserEntityHolder } from "../src/entities/auth.entities";
 import { JwtResponse } from "../src/entities/jwt.entities";
 import { PasswordsDoNotMatchError, UserAlreadyExistsError } from "@shared/errors";
+import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 
 describe(AuthController, () => {
     let users: User[];
@@ -26,7 +27,7 @@ describe(AuthController, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User]),
+                TypeOrmModule.forFeature([User, OperatingSystem]),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,

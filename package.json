@@ -25,7 +25,8 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
-        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+        "seed": "ts-node -r tsconfig-paths/register ./scripts/seed-iso-images.ts"
     },
     "dependencies": {
         "@nestjs/axios": "^0.0.5",

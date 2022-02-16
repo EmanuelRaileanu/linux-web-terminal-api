@@ -1,6 +1,6 @@
 import { UserService } from "../src/services/user.service";
 import { getRepository, QueryFailedError, Repository } from "typeorm";
-import { User } from "../src/entities/db/user.entity";
+import { User } from "@shared/db-entities/user.entity";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "../src/config";
@@ -9,6 +9,7 @@ import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from
 import * as bcrypt from "bcryptjs";
 import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
 import { SessionUserEntity } from "@shared/entities";
+import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 
 describe(UserService, () => {
     let users: User[];
@@ -19,7 +20,7 @@ describe(UserService, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User]),
+                TypeOrmModule.forFeature([User, OperatingSystem]),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,

@@ -1,4 +1,6 @@
+import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+
 export interface IIsoImageService {
     getAvailableIsoImages(): Promise<string[]>;
-    getIsoImageAbsolutePath(isoImage: string): Promise<string>
+    getIsoImageOsEntry(isoImage: string): Promise<OperatingSystem>
 }

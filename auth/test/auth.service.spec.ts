@@ -1,5 +1,5 @@
 import { AuthService } from "../src/services/auth.service";
-import { User } from "../src/entities/db/user.entity";
+import { User } from "@shared/db-entities/user.entity";
 import { getRepository, Repository } from "typeorm";
 import { UserService } from "../src/services/user.service";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -14,6 +14,7 @@ import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, Wr
 import { RegisterRequest } from "../src/entities/auth.entities";
 import { CacheModule } from "@nestjs/common";
 import { ValidateUserResponse } from "@shared/entities";
+import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 
 describe(AuthService, () => {
     let users: User[];
@@ -25,7 +26,7 @@ describe(AuthService, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User]),
+                TypeOrmModule.forFeature([User, OperatingSystem]),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,

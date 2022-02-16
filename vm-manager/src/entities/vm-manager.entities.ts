@@ -80,6 +80,7 @@ export interface ExecResponse {
 }
 
 export interface KickStartFileTemplateParameters {
+    ksFileName: string;
     networkInterface: string;
     timezone: string;
     username: string;

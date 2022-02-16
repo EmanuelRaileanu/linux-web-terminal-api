@@ -1,29 +1,30 @@
 import { Injectable } from "@nestjs/common";
-import { access, readdir } from "fs/promises";
-import { config } from "../config";
 import { IsoImageNotFoundError } from "../errors";
 import { IIsoImageService } from "../entities/IIsoImageService";
+import { InjectRepository } from "@nestjs/typeorm";
+import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class IsoImageService implements IIsoImageService {
-    private static async checkIfImageExistsOnDisk(isoImage: string): Promise<boolean> {
-        try {
-            await access(`${config.isoImagesDirectoryPath}/${isoImage}`);
-            return true;
-        } catch (err) {
-            return false;
-        }
-    }
+    constructor(@InjectRepository(
+        OperatingSystem) private readonly osRepository: Repository<OperatingSystem>
+    ) {}
 
     public async getAvailableIsoImages(): Promise<string[]> {
-        const files = await readdir(config.isoImagesDirectoryPath);
-        return files.filter(file => file.endsWith(".iso"));
+        const operatingSystems = await this.osRepository.find({ select: ["isoFileName"] });
+        return operatingSystems.map(os => os.isoFileName);
     }
 
-    public async getIsoImageAbsolutePath(isoImage: string): Promise<string> {
-        if (!await IsoImageService.checkIfImageExistsOnDisk(isoImage)) {
+    public async getIsoImageOsEntry(isoImage: string): Promise<OperatingSystem> {
+        const os = await this.findByIsoFileName(isoImage);
+        if (!os) {
             throw new IsoImageNotFoundError();
         }
-        return `${config.isoImagesDirectoryPath}/${isoImage}`;
+        return os;
+    }
+
+    private findByIsoFileName(isoFileName: string): Promise<OperatingSystem | undefined> {
+        return this.osRepository.findOne({ isoFileName });
     }
 }
