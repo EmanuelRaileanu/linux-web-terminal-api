@@ -33,8 +33,8 @@ export class VirtInstallService implements IVirtInstallService {
         const fileName = uuid() + ".ks";
         const filePath = VirtInstallService.PUBLIC_DIRECTORY_PATH + "/" + fileName;
         await writeFile(filePath, await renderFile(ksTemplateFilePath, options as any));
-        const schema = config.ssl.enabled ? "http://" : "https://";
-        return `${schema}${ip.address()}${config.internalStaticServerPort}/${fileName}`;
+        const schema = config.ssl.enabled ? "https://" : "http://";
+        return `${schema}${ip.address()}:${config.internalStaticServerPort}/${fileName}`;
     }
 
     public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
