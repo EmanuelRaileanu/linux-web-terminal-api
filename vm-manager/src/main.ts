@@ -10,7 +10,7 @@ const httpsOptions = config.ssl.enabled ? {
 } : undefined;
 
 const startInternalServer = () => {
-    bootstrapServer(InternalStaticServerModule, config.internalStaticServerPort, httpsOptions)
+    bootstrapServer(InternalStaticServerModule, config.internalStaticServerPort)
         .catch(err => console.error("Error occurred when starting the static files internal service:", err));
 };
 
