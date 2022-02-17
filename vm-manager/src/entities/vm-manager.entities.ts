@@ -51,10 +51,6 @@ export class CloneVirtualMachineOptions {
     @IsNotEmpty()
     @IsString()
     name: string;
-
-    @IsNotEmpty()
-    @IsString()
-    pathToOriginalVMVirtualHardDisks: string;
 }
 
 export class VmToggleParams {
