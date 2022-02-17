@@ -56,7 +56,7 @@ export class VirtInstallService implements IVirtInstallService {
             --virt-type=kvm \
             --disk size=${options.diskSize} \
             --connect=${config.libVirtUrl} \
-            --location=${os.isoFileName} \
+            --location=${join(config.isoImagesDirectoryPath, os.isoFileName)} \
             --graphics none \
             --network bridge=${options.networkInterface || config.defaultNetworkInterface} \
             --extra-args="ks=${kickstartFileUrl} console=ttyS0 console=ttyS0,115200" \
