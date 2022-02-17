@@ -16,10 +16,11 @@ import { renderFile } from "template-file";
 import { TimezoneService } from "./timezone.service";
 import * as ip from "ip";
 import { join } from "path";
+import * as appRoot from "app-root-path";
 
 @Injectable()
 export class VirtInstallService implements IVirtInstallService {
-    private static readonly PUBLIC_DIRECTORY_PATH = join(__dirname, "../../..", "public");
+    private static readonly PUBLIC_DIRECTORY_PATH = appRoot + "/public";
 
     constructor(
         private readonly isoImageService: IsoImageService,
