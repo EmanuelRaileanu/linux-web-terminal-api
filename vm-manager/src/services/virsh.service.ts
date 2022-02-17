@@ -61,15 +61,7 @@ export class VirshService implements IVirshService {
     }
 
     public async destroyVirtualMachine(vmName: string): Promise<ResponseFromStdout> {
-        const destroyVirtualMachineCommand = `virsh undefine \
-            --domain ${vmName} \
-            --managed-save \
-            --remove-all-storage \
-            --delete-snapshots \
-            --wipe-storage \
-            --snapshots-metadata \
-            --nvram\
-        `;
+        const destroyVirtualMachineCommand = `virsh undefine ${vmName} --remove-all-storage`;
         const { stdout, stderr } = await this.execService.run(formatCommand(destroyVirtualMachineCommand));
         if (stderr) {
             throw new VirshUndefineError(stderr);
