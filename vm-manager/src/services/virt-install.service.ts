@@ -10,7 +10,7 @@ import { VirtInstallError } from "../errors";
 import { IVirtInstallService } from "../entities/IVirtInstallService";
 import { ExecService } from "./exec.service";
 import { formatCommand } from "@shared/utils";
-import { unlink, writeFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { renderFile } from "template-file";
 import { TimezoneService } from "./timezone.service";
@@ -66,7 +66,6 @@ export class VirtInstallService implements IVirtInstallService {
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
-        unlink(join(VirtInstallService.PUBLIC_DIRECTORY_PATH, kickstartFileName)).catch(err => console.log("Unlink error:", err));
         // TODO: The local ip of the vm needs to be returned as well
         return {
             message: "VM created successfully",
