@@ -3,7 +3,6 @@ import { CloneVirtualMachineOptions, ResponseFromStdout } from "../entities/vm-m
 import { VirtCloneError } from "../errors";
 import { ExecService } from "./exec.service";
 import { IVirtCloneService } from "../entities/IVirtCloneService";
-import { formatCommand } from "@shared/utils";
 
 @Injectable()
 export class VirtCloneService implements IVirtCloneService {
@@ -17,7 +16,7 @@ export class VirtCloneService implements IVirtCloneService {
             --name=${options.name} \
             --auto-clone
         `;
-        const { stdout, stderr } = await this.execService.run(formatCommand(virtCloneCommand));
+        const { stdout, stderr } = await this.execService.run(virtCloneCommand);
         if (stderr) {
             throw new VirtCloneError(stderr);
         }

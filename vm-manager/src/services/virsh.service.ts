@@ -9,7 +9,6 @@ import {
 } from "../errors";
 import { IVirshService } from "../entities/IVirshService";
 import { ResponseFromStdout } from "../entities/vm-manager.entities";
-import { formatCommand } from "@shared/utils";
 
 @Injectable()
 export class VirshService implements IVirshService {
@@ -62,7 +61,7 @@ export class VirshService implements IVirshService {
 
     public async destroyVirtualMachine(vmName: string): Promise<ResponseFromStdout> {
         const destroyVirtualMachineCommand = `virsh undefine ${vmName} --remove-all-storage`;
-        const { stdout, stderr } = await this.execService.run(formatCommand(destroyVirtualMachineCommand));
+        const { stdout, stderr } = await this.execService.run(destroyVirtualMachineCommand);
         if (stderr) {
             throw new VirshUndefineError(stderr);
         }

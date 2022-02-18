@@ -9,7 +9,6 @@ import { IsoImageService } from "./iso-image.service";
 import { VirtInstallError } from "../errors";
 import { IVirtInstallService } from "../entities/IVirtInstallService";
 import { ExecService } from "./exec.service";
-import { formatCommand } from "@shared/utils";
 import { writeFile } from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { renderFile } from "template-file";
@@ -62,7 +61,7 @@ export class VirtInstallService implements IVirtInstallService {
             --extra-args="ks=${kickstartFileUrl} console=ttyS0 console=ttyS0,115200" \
             --noautoconsole\
         `;
-        const { stdout, stderr } = await this.execService.run(formatCommand(virtInstallCommand));
+        const { stdout, stderr } = await this.execService.run(virtInstallCommand);
         if (stderr) {
             throw new VirtInstallError(stderr);
         }

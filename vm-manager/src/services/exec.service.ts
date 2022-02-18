@@ -3,6 +3,7 @@ import { promisify } from "util";
 import { IExecService } from "../entities/IExecService";
 import { ExecResponse, PromisifiedExecFunction } from "../entities/vm-manager.entities";
 import { Injectable } from "@nestjs/common";
+import { formatCommand } from "@shared/utils";
 
 @Injectable()
 export class ExecService implements IExecService {
@@ -15,7 +16,7 @@ export class ExecService implements IExecService {
     public async run(command: string): Promise<ExecResponse> {
         let result: ExecResponse;
         try {
-            result = await this.promisifiedExec(command);
+            result = await this.promisifiedExec(formatCommand(command));
         } catch (err) {
             result = { stderr: err.stderr, stdout: "" };
         }
