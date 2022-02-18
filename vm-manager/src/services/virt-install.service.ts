@@ -33,7 +33,7 @@ export class VirtInstallService implements IVirtInstallService {
         const fileName = uuid() + ".ks";
         const filePath = VirtInstallService.PUBLIC_DIRECTORY_PATH + "/" + fileName;
         await writeFile(filePath, await renderFile(ksTemplateFilePath, options as any));
-        return `http://${ip.address()}:${config.internalStaticServerPort}/${fileName}`;
+        return fileName;
     }
 
     public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
@@ -45,7 +45,8 @@ export class VirtInstallService implements IVirtInstallService {
             username: options.username,
             password: options.password
         };
-        const kickstartFileUrl = await VirtInstallService.createKickstartFile(kickStarterFileParameters);
+        const kickstartFileName = await VirtInstallService.createKickstartFile(kickStarterFileParameters);
+        const kickstartFileUrl = `http://${ip.address()}:${config.internalStaticServerPort}/${kickstartFileName}`;
         const virtInstallCommand = `virt-install \
             --name=${options.name} \
             --vcpus=${options.numberOfVirtualCpus} \
@@ -65,7 +66,7 @@ export class VirtInstallService implements IVirtInstallService {
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
-        unlink(VirtInstallService.PUBLIC_DIRECTORY_PATH).catch(err => console.log("Unlink error:", err));
+        unlink(join(VirtInstallService.PUBLIC_DIRECTORY_PATH, kickstartFileName)).catch(err => console.log("Unlink error:", err));
         // TODO: The local ip of the vm needs to be returned as well
         return {
             message: "VM created successfully",
