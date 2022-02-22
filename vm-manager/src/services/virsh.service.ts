@@ -78,7 +78,7 @@ export class VirshService implements IVirshService {
     }
 
     public async assignStaticIpAndHostName(mac: string, ip: string, hostName: string): Promise<ResponseFromStdout> {
-        const xml = `<host mac='${mac}' name="${hostName}" ip='${ip}'/>`;
+        const xml = `<host mac='${mac}' name='${hostName}' ip='${ip}'/>`;
         const netUpdateCommand = `virsh net-update \
             --network ${config.kvmNetworkName} \
             --command add-last \
