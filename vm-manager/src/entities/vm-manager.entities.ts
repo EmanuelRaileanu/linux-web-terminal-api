@@ -88,17 +88,13 @@ export interface ExecResponse {
     stderr: string;
 }
 
-export interface NetworkingParameters {
-    networkInterface: string;
-    macAddress: string;
-    ip: string;
-}
-
-export interface KickStartFileTemplateParameters extends NetworkingParameters {
+export interface KickStartFileTemplateParameters {
     ksFileName: string;
     timezone: string;
     username: string;
     password: string;
+    networkInterface: string;
+    ip: string;
 }
 
 export type PromisifiedExecFunction = (command: string) => Promise<ExecResponse>;

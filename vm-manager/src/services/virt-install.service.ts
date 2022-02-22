@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import {
     CreateVirtualMachineOptions,
     KickStartFileTemplateParameters,
-    NetworkingParameters,
     ResponseFromStdout
 } from "../entities/vm-manager.entities";
 import { config } from "../config";
@@ -46,29 +45,23 @@ export class VirtInstallService implements IVirtInstallService {
 
     public async createVirtualMachine(user: SessionUserEntity, options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
         const os = await this.isoImageService.getIsoImageOsEntry(options.isoImage);
-        const networkingParameters: NetworkingParameters = {
-            networkInterface: options.networkInterface || config.defaultNetworkInterface,
-            macAddress: await this.networkService.createKvmMacAddress(),
-            ip: await this.networkService.createIp()
-        };
+        const macAddress = await this.networkService.createKvmMacAddress();
+        const ip = await this.networkService.createIp();
 
         const kickStarterFileParameters: KickStartFileTemplateParameters = {
             ksFileName: os.ksFileName,
             timezone: await this.timezoneService.validateTimezone(options.timezone),
             username: options.username,
             password: options.password,
-            ...networkingParameters
+            networkInterface: options.networkInterface || config.defaultNetworkInterface,
+            ip
         };
         const kickstartFileName = await VirtInstallService.createKickStarterFile(kickStarterFileParameters);
         const kickstartFileUrl = `http://${getLocalIp()}:${config.internalStaticServerPort}/${kickstartFileName}`;
         const vmName = createUniqueVmName(options.name);
 
         // Assign the static IP before creating the VM because if this call fails, the VM should not be created
-        await this.virshService.assignStaticIpAndHostName(
-            networkingParameters.macAddress,
-            networkingParameters.ip,
-            vmName
-        );
+        await this.virshService.assignStaticIpAndHostName(macAddress, ip, vmName);
 
         const virtInstallCommand = `virt-install \
             --name=${vmName} \
@@ -81,7 +74,7 @@ export class VirtInstallService implements IVirtInstallService {
             --connect=${config.libVirtUrl} \
             --location=${join(config.isoImagesDirectoryPath, os.isoFileName)} \
             --graphics none \
-            --network bridge=${options.networkInterface || config.defaultNetworkInterface} \
+            --network bridge=${options.networkInterface || config.defaultNetworkInterface},mac=${macAddress} \
             --extra-args="ks=${kickstartFileUrl} console=ttyS0 console=ttyS0,115200" \
             --noautoconsole\
         `;
@@ -97,7 +90,9 @@ export class VirtInstallService implements IVirtInstallService {
             diskSize: options.diskSize,
             memory: options.memory,
             numberOfVirtualCpus: options.numberOfVirtualCpus,
-            ...networkingParameters,
+            macAddress: macAddress,
+            ip,
+            networkInterface: kickStarterFileParameters.networkInterface,
             user_id: user.id,
             operatingSystem: os
         });
