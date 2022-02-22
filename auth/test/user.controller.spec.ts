@@ -34,7 +34,7 @@ describe(UserService, () => {
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true
+                    entities: ENTITIES
                 }),
                 JwtModule.register({
                     secret: config.jwt.secret,

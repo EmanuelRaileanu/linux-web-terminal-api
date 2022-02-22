@@ -41,7 +41,7 @@ describe(LocalAuthGuard, () => {
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true
+                    entities: ENTITIES
                 }),
                 PassportModule,
                 JwtModule.register({
