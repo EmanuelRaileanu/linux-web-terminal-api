@@ -7,9 +7,14 @@ import { config } from "../src/config";
 import { CacheModule } from "@nestjs/common";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
 import * as bcrypt from "bcryptjs";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
+import {
+    PasswordsDoNotMatchError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    WrongPasswordError
+} from "@shared/errors";
 import { SessionUserEntity } from "@shared/entities";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(UserService, () => {
     let users: User[];
@@ -20,13 +25,12 @@ describe(UserService, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature(ENTITIES),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    autoLoadEntities: true
                 }),
                 CacheModule.register()
             ],
@@ -66,7 +70,7 @@ describe(UserService, () => {
         return expect(userService.findById(users[0].id)).resolves.toEqual(users[0]);
     });
 
-    test("Fetch user by id when user doesn't exist", () => {
+    test("Fetch user by id when the user doesn't exist", () => {
         return expect(userService.findById("81e92e0e-2d51-426f-9887-846e9e3d486a")).resolves.toEqual(undefined);
     });
 
@@ -74,7 +78,7 @@ describe(UserService, () => {
         return expect(userService.findByUsername("jared")).resolves.toEqual(users[0]);
     });
 
-    test("Fetch user by username when user doesn't exist", () => {
+    test("Fetch user by username when the user doesn't exist", () => {
         return expect(userService.findById("greg")).resolves.toEqual(undefined);
     });
 
@@ -82,7 +86,7 @@ describe(UserService, () => {
         return expect(userService.findByEmail("jared@email.com")).resolves.toEqual(users[0]);
     });
 
-    test("Fetch user by email when user doesn't exist", () => {
+    test("Fetch user by email when the user doesn't exist", () => {
         return expect(userService.findById("email@nsa.com")).resolves.toEqual(undefined);
     });
 

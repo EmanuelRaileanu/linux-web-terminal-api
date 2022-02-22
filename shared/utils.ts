@@ -13,6 +13,15 @@ import {
 import { ClassConstructor } from "class-transformer";
 import { InvalidBearerTokenError } from "@shared/errors";
 import { HttpsOptions } from "@nestjs/common/interfaces/external/https-options.interface";
+import { v4 as uuid } from "uuid";
+
+export const getRandomInt = (offset: number, limit: number): number => {
+    return offset + Math.floor(Math.random() * limit);
+};
+
+export const createUniqueVmName = (name: string): string => {
+    return `${name}__${uuid()}`;
+};
 
 export const formatCommand = (command: string): string => {
     return command.trim().replace(/\t/g, "");

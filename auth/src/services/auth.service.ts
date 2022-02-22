@@ -32,8 +32,8 @@ export class AuthService implements IAuthService {
         if (!await bcrypt.compare(pass, user.password)) {
             throw new WrongPasswordError();
         }
-        const { id, username, email } = user;
-        return { id, username, email };
+        const { id, username, email, vmInstances } = user;
+        return { id, username, email, vmInstances: vmInstances?.map(vmi => vmi.name) };
     }
 
     public async register(payload: RegisterRequest): Promise<void> {

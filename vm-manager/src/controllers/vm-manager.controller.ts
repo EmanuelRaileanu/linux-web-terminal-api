@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from "@nestjs/common";
 import { VirtInstallService } from "../services/virt-install.service";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import {
@@ -12,6 +12,8 @@ import { VirtCloneService } from "../services/virt-clone.service";
 import { VirshService } from "../services/virsh.service";
 import { IsoImageService } from "../services/iso-image.service";
 import { TimezoneService } from "../services/timezone.service";
+import { UserEntityHolder } from "../../../auth/src/entities/auth.entities";
+import { PermissionsGuard } from "../guards/permissions.guard";
 
 @UseGuards(JwtAuthGuard)
 @Controller("api/v1")
@@ -35,13 +37,14 @@ export class VmManagerController {
     }
 
     @Post("virtual-machines")
-    public create(@Body() options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
-        return this.virtInstallService.createVirtualMachine(options);
+    public create(@Request() req: UserEntityHolder, @Body() options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
+        return this.virtInstallService.createVirtualMachine(req.user, options);
     }
 
+    @UseGuards(PermissionsGuard)
     @Post("virtual-machines/clone")
-    public clone(@Body() options: CloneVirtualMachineOptions): Promise<ResponseFromStdout> {
-        return this.virtCloneService.cloneVirtualMachine(options);
+    public clone(@Request() req: UserEntityHolder, @Body() options: CloneVirtualMachineOptions): Promise<ResponseFromStdout> {
+        return this.virtCloneService.cloneVirtualMachine(req.user, options);
     }
 
     @Get("virtual-machines")
@@ -49,11 +52,13 @@ export class VmManagerController {
         return this.virshService.listAllVirtualMachines();
     }
 
+    @UseGuards(PermissionsGuard)
     @Get("virtual-machines/:vmName/start")
     public start(@Param() params: VmToggleParams): Promise<ResponseFromStdout> {
         return this.virshService.startVirtualMachine(params.vmName);
     }
 
+    @UseGuards(PermissionsGuard)
     @Get("virtual-machines/:vmName/shutdown")
     public shutdown(@Param() params: VmToggleParams, @Query() query: VmShutDownQueryParams): Promise<ResponseFromStdout> {
         return query.forced && !!+query.forced
@@ -61,6 +66,7 @@ export class VmManagerController {
             : this.virshService.shutDownVirtualMachine(params.vmName);
     }
 
+    @UseGuards(PermissionsGuard)
     @Delete("virtual-machines/:vmName")
     public destroy(@Param() params: VmToggleParams): Promise<ResponseFromStdout> {
         return this.virshService.destroyVirtualMachine(params.vmName);

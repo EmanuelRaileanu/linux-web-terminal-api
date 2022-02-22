@@ -13,6 +13,7 @@ export interface ValidateUserResponse {
     id: string;
     username: string;
     email: string;
+    vmInstances?: string[];
 }
 
 export interface SessionUserEntity extends ValidateUserResponse {

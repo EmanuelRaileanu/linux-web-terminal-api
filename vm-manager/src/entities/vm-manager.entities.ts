@@ -1,4 +1,6 @@
 import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from "class-validator";
+import { VmInstance } from "@shared/db-entities/vm-instance.entity";
+import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 
 export class CreateVirtualMachineOptions {
     @IsNotEmpty()
@@ -24,10 +26,6 @@ export class CreateVirtualMachineOptions {
     @IsDefined()
     @IsNumber()
     memory: number;
-
-    @IsString()
-    @IsNotEmpty()
-    osVariant: string;
 
     @IsDefined()
     @IsNumber()
@@ -65,9 +63,24 @@ export class VmShutDownQueryParams {
     forced?: string;
 }
 
+export interface CreateVmInstanceRequest {
+    name: string;
+    username: string;
+    timezone: string;
+    diskSize: number;
+    memory: number;
+    numberOfVirtualCpus: number;
+    macAddress: string;
+    ip: string;
+    networkInterface: string;
+    user_id: string;
+    operatingSystem: OperatingSystem;
+}
+
 export interface ResponseFromStdout {
     message: string;
     consoleOutput: string;
+    entity?: VmInstance;
 }
 
 export interface ExecResponse {
@@ -75,9 +88,14 @@ export interface ExecResponse {
     stderr: string;
 }
 
-export interface KickStartFileTemplateParameters {
-    ksFileName: string;
+export interface NetworkingParameters {
     networkInterface: string;
+    macAddress: string;
+    ip: string;
+}
+
+export interface KickStartFileTemplateParameters extends NetworkingParameters {
+    ksFileName: string;
     timezone: string;
     username: string;
     password: string;

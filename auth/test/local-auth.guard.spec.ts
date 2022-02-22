@@ -12,7 +12,7 @@ import { CacheModule } from "@nestjs/common";
 import { UserNotFoundError, WrongPasswordError } from "@shared/errors";
 import { getRepository, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(LocalAuthGuard, () => {
     let user: User;
@@ -36,13 +36,12 @@ describe(LocalAuthGuard, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature(ENTITIES),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    autoLoadEntities: true
                 }),
                 PassportModule,
                 JwtModule.register({

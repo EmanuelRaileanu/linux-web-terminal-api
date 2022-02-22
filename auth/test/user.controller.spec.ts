@@ -9,10 +9,15 @@ import * as bcrypt from "bcryptjs";
 import { UserController } from "../src/controllers/user.controller";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
 import { UserEntityHolder } from "../src/entities/auth.entities";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
+import {
+    PasswordsDoNotMatchError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    WrongPasswordError
+} from "@shared/errors";
 import { JwtModule } from "@nestjs/jwt";
 import { SessionUserEntity } from "@shared/entities";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(UserService, () => {
     let users: User[];
@@ -24,13 +29,12 @@ describe(UserService, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature(ENTITIES),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    autoLoadEntities: true
                 }),
                 JwtModule.register({
                     secret: config.jwt.secret,
@@ -46,7 +50,7 @@ describe(UserService, () => {
         userRepository = getRepository<User>(User);
         users = [
             {
-                id: "929a511c-a390-457e-8eb8-aab468ea93f5",
+                id: "3ceeb3d0-09d5-4cb5-a5a6-c40e9d1b1462",
                 username: "carl",
                 email: "carl@email.com",
                 password: await bcrypt.hash("password", await bcrypt.genSalt()),
@@ -54,7 +58,7 @@ describe(UserService, () => {
                 updatedAt: new Date()
             },
             {
-                id: "3ceeb3d0-09d5-4cb5-a5a6-c40e9d1b1462",
+                id: "929a511c-a390-457e-8eb8-aab468ea93f5",
                 username: "irina",
                 email: "irina@email.com",
                 password: await bcrypt.hash("password", await bcrypt.genSalt()),
@@ -62,7 +66,7 @@ describe(UserService, () => {
                 updatedAt: new Date()
             }
         ];
-        userEntityHolder = { user: users[0] };
+        userEntityHolder = { user: {  ...users[0], vmInstances: [] } };
         await userRepository.insert(users);
     });
 

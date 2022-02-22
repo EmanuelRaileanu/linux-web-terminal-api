@@ -19,28 +19,28 @@ import { IUserService } from "../entities/IUserService";
 @Injectable()
 export class UserService implements IUserService {
     constructor(
-        @InjectRepository(User) private readonly usersRepository: Repository<User>,
+        @InjectRepository(User) private readonly userRepository: Repository<User>,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
     ) {}
 
     public findById(id: string): Promise<User | undefined> {
-        return this.usersRepository.findOne(id);
+        return this.userRepository.findOne(id);
     }
 
-    public findByUsername(username: string): Promise<User | undefined> {
-        return this.usersRepository.findOne({ username });
+    public findByUsername(username: string, relations?: string[]): Promise<User | undefined> {
+        return this.userRepository.findOne({ username }, { relations });
     }
 
     public findByEmail(email: string): Promise<User | undefined> {
-        return this.usersRepository.findOne({ email });
+        return this.userRepository.findOne({ email });
     }
 
     public async create(payload: CreateUserRequest): Promise<User> {
-        return this.usersRepository.save(this.usersRepository.create(payload));
+        return this.userRepository.save(this.userRepository.create(payload));
     }
 
     public async deleteById(id: string): Promise<void> {
-        await this.usersRepository.delete(id);
+        await this.userRepository.delete(id);
     }
 
     public async changeUsername(user: SessionUserEntity, changeUsernameRequest: ChangeUsernameRequest): Promise<void> {
@@ -50,7 +50,7 @@ export class UserService implements IUserService {
         if (existingUser) {
             throw new UserAlreadyExistsError(UserConflictReasons.username);
         }
-        await this.usersRepository.update({ id: user.id }, { username: newUsername });
+        await this.userRepository.update({ id: user.id }, { username: newUsername });
         await this.cacheManager.del(user.id);
     }
 
@@ -61,7 +61,7 @@ export class UserService implements IUserService {
         if (existingUser) {
             throw new UserAlreadyExistsError(UserConflictReasons.email);
         }
-        await this.usersRepository.update({ id: user.id }, { email: newEmail });
+        await this.userRepository.update({ id: user.id }, { email: newEmail });
         await this.cacheManager.del(user.id);
     }
 
@@ -71,7 +71,7 @@ export class UserService implements IUserService {
         if (newPassword !== confirmedNewPassword) {
             throw new PasswordsDoNotMatchError();
         }
-        await this.usersRepository.update({ id: user.id }, {
+        await this.userRepository.update({ id: user.id }, {
             password: await bcrypt.hash(newPassword, await bcrypt.genSalt())
         });
         await this.cacheManager.del(user.id);

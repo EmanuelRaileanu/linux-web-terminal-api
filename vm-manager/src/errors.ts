@@ -54,6 +54,12 @@ export class VirshUndefineError extends VirshError {
     }
 }
 
+export class VirshNetUpdateError extends VirshError {
+    constructor(errorMessage: string) {
+        super("net-update", errorMessage);
+    }
+}
+
 export class TimezoneServiceError extends InternalServerErrorException {
     constructor(errorMessage: string) {
         super("timedatectl error: " + errorMessage);
@@ -70,4 +76,11 @@ export class TimezoneMatchesMultipleItems extends ConflictException {
     constructor(timezone: string, foundTimezones: string[]) {
         super(`${timezone} matches multiple items: ${foundTimezones}`);
     }
+}
+
+export class VmInstanceNotFoundError extends NotFoundException {
+    constructor() {
+        super("VM instance not found");
+    }
+
 }

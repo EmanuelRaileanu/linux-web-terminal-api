@@ -15,7 +15,7 @@ import { AuthController } from "../src/controllers/auth.controller";
 import { RegisterRequest, UserEntityHolder } from "../src/entities/auth.entities";
 import { JwtResponse } from "../src/entities/jwt.entities";
 import { PasswordsDoNotMatchError, UserAlreadyExistsError } from "@shared/errors";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(AuthController, () => {
     let users: User[];
@@ -27,13 +27,12 @@ describe(AuthController, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature(ENTITIES),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    autoLoadEntities: true
                 }),
                 PassportModule,
                 JwtModule.register({

@@ -8,9 +8,8 @@ import { JwtModule } from "@nestjs/jwt";
 import { config } from "../config";
 import { JwtStrategy } from "../strategies/jwt.strategy";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "@shared/db-entities/user.entity";
 import { UserController } from "../controllers/user.controller";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 @Module({
     imports: [
@@ -23,8 +22,7 @@ import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
         TypeOrmModule.forRoot({
             type: "mysql",
             ...config.db,
-            entities: [User, OperatingSystem],
-            synchronize: true
+            entities: ENTITIES
         })
     ],
     controllers: [AuthController, UserController],

@@ -2,17 +2,22 @@ import { Injectable } from "@nestjs/common";
 import { ExecService } from "./exec.service";
 import {
     VirshForcedShutDownError,
-    VirshListAllVirtualMachinesError,
+    VirshListAllVirtualMachinesError, VirshNetUpdateError,
     VirshShutDownError,
     VirshStartError,
     VirshUndefineError
 } from "../errors";
 import { IVirshService } from "../entities/IVirshService";
 import { ResponseFromStdout } from "../entities/vm-manager.entities";
+import { VmInstanceService } from "./vm-instance.service";
+import { config } from "../config";
 
 @Injectable()
 export class VirshService implements IVirshService {
-    constructor(private readonly execService: ExecService) {}
+    constructor(
+        private readonly execService: ExecService,
+        private readonly vmInstanceService: VmInstanceService
+    ) {}
 
     public async listAllVirtualMachines(): Promise<string[]> {
         const listAllVMsCommand = "virsh list --all --name";
@@ -65,8 +70,29 @@ export class VirshService implements IVirshService {
         if (stderr) {
             throw new VirshUndefineError(stderr);
         }
+        await this.vmInstanceService.deleteByVmName(vmName);
         return {
             message: "VM destroyed successfully",
+            consoleOutput: stdout
+        };
+    }
+
+    public async assignStaticIpAndHostName(mac: string, ip: string, hostName: string): Promise<ResponseFromStdout> {
+        const xml = `<host mac='${mac}' name="${hostName}" ip='${ip}'/>`;
+        const netUpdateCommand = `virsh net-update \
+            --network ${config.kvmNetworkName} \
+            --command add-last \
+            --section ip-dhcp-host
+            --xml "${xml}" \
+            --live \
+            --config\
+        `;
+        const { stdout, stderr } = await this.execService.run(netUpdateCommand);
+        if (stderr) {
+            throw new VirshNetUpdateError(stderr);
+        }
+        return {
+            message: "Static ip assigned successfully",
             consoleOutput: stdout
         };
     }

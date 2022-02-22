@@ -12,8 +12,8 @@ export enum UserConflictReasons {
 }
 
 export class UserNotFoundError extends NotFoundException {
-    constructor() {
-        super("User not found");
+    constructor(message?: string) {
+        super(message || "User not found");
     }
 }
 

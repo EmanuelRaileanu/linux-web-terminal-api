@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
     CreateVirtualMachineOptions,
     KickStartFileTemplateParameters,
+    NetworkingParameters,
     ResponseFromStdout
 } from "../entities/vm-manager.entities";
 import { config } from "../config";
@@ -13,9 +14,14 @@ import { writeFile } from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { renderFile } from "template-file";
 import { TimezoneService } from "./timezone.service";
-import * as ip from "ip";
+import { address as getLocalIp } from "ip";
 import { join } from "path";
 import * as appRoot from "app-root-path";
+import { VmInstanceService } from "./vm-instance.service";
+import { createUniqueVmName } from "@shared/utils";
+import { SessionUserEntity } from "@shared/entities";
+import { NetworkService } from "./network.service";
+import { VirshService } from "./virsh.service";
 
 @Injectable()
 export class VirtInstallService implements IVirtInstallService {
@@ -24,10 +30,13 @@ export class VirtInstallService implements IVirtInstallService {
     constructor(
         private readonly isoImageService: IsoImageService,
         private readonly timezoneService: TimezoneService,
-        private readonly execService: ExecService
+        private readonly execService: ExecService,
+        private readonly vmInstanceService: VmInstanceService,
+        private readonly networkService: NetworkService,
+        private readonly virshService: VirshService
     ) {}
 
-    private static async createKickstartFile(options: KickStartFileTemplateParameters): Promise<string> {
+    private static async createKickStarterFile(options: KickStartFileTemplateParameters): Promise<string> {
         const ksTemplateFilePath = join(config.ksFilesDirectoryPath, options.ksFileName);
         const fileName = uuid() + ".ks";
         const filePath = VirtInstallService.PUBLIC_DIRECTORY_PATH + "/" + fileName;
@@ -35,23 +44,38 @@ export class VirtInstallService implements IVirtInstallService {
         return fileName;
     }
 
-    public async createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
+    public async createVirtualMachine(user: SessionUserEntity, options: CreateVirtualMachineOptions): Promise<ResponseFromStdout> {
         const os = await this.isoImageService.getIsoImageOsEntry(options.isoImage);
+        const networkingParameters: NetworkingParameters = {
+            networkInterface: options.networkInterface || config.defaultNetworkInterface,
+            macAddress: await this.networkService.createKvmMacAddress(),
+            ip: await this.networkService.createIp()
+        };
+
         const kickStarterFileParameters: KickStartFileTemplateParameters = {
             ksFileName: os.ksFileName,
-            networkInterface: options.networkInterface || config.defaultNetworkInterface,
             timezone: await this.timezoneService.validateTimezone(options.timezone),
             username: options.username,
-            password: options.password
+            password: options.password,
+            ...networkingParameters
         };
-        const kickstartFileName = await VirtInstallService.createKickstartFile(kickStarterFileParameters);
-        const kickstartFileUrl = `http://${ip.address()}:${config.internalStaticServerPort}/${kickstartFileName}`;
+        const kickstartFileName = await VirtInstallService.createKickStarterFile(kickStarterFileParameters);
+        const kickstartFileUrl = `http://${getLocalIp()}:${config.internalStaticServerPort}/${kickstartFileName}`;
+        const vmName = createUniqueVmName(options.name);
+
+        // Assign the static IP before creating the VM because if this call fails, the VM should not be created
+        await this.virshService.assignStaticIpAndHostName(
+            networkingParameters.macAddress,
+            networkingParameters.ip,
+            vmName
+        );
+
         const virtInstallCommand = `virt-install \
-            --name=${options.name} \
+            --name=${vmName} \
             --vcpus=${options.numberOfVirtualCpus} \
             --memory=${options.memory} \
             --os-type=linux \
-            --os-variant=${options.osVariant} \
+            --os-variant=${os.osVariant} \
             --virt-type=kvm \
             --disk size=${options.diskSize} \
             --connect=${config.libVirtUrl} \
@@ -65,10 +89,23 @@ export class VirtInstallService implements IVirtInstallService {
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
-        // TODO: The local ip of the vm needs to be returned as well
+
+        const vmInstanceEntity = await this.vmInstanceService.create(user, {
+            name: vmName,
+            username: options.username,
+            timezone: options.timezone,
+            diskSize: options.diskSize,
+            memory: options.memory,
+            numberOfVirtualCpus: options.numberOfVirtualCpus,
+            ...networkingParameters,
+            user_id: user.id,
+            operatingSystem: os
+        });
+
         return {
             message: "VM created successfully",
-            consoleOutput: stdout
+            consoleOutput: stdout,
+            entity: vmInstanceEntity
         };
     }
 }

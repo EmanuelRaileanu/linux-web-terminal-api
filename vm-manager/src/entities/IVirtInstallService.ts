@@ -1,5 +1,6 @@
 import { CreateVirtualMachineOptions, ResponseFromStdout } from "./vm-manager.entities";
+import { SessionUserEntity } from "@shared/entities";
 
 export interface IVirtInstallService {
-    createVirtualMachine(options: CreateVirtualMachineOptions): Promise<ResponseFromStdout>;
+    createVirtualMachine(user: SessionUserEntity, options: CreateVirtualMachineOptions): Promise<ResponseFromStdout>;
 }

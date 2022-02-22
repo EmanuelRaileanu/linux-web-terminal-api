@@ -3,9 +3,9 @@ import { config } from "../src/config";
 import { IsoImageNotFoundError } from "../src/errors";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "@shared/db-entities/user.entity";
 import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 import { getRepository, Repository } from "typeorm";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(IsoImageService, () => {
     let moduleRef: TestingModule;
@@ -18,13 +18,12 @@ describe(IsoImageService, () => {
         config.isoImagesDirectoryPath = __dirname;
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature([OperatingSystem]),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    entities: ENTITIES
                 })
             ],
             providers: [IsoImageService]
@@ -38,6 +37,7 @@ describe(IsoImageService, () => {
                 id: "4811847d-ce29-4057-8244-3949f0c68538",
                 isoFileName: "image1.iso",
                 ksFileName: "debian.ks",
+                osVariant: "debian",
                 createdAt: new Date(),
                 updatedAt: new Date()
             },
@@ -45,6 +45,7 @@ describe(IsoImageService, () => {
                 id: "cf6f912b-3f27-4f92-b104-4853ada60cee",
                 isoFileName: "image2.iso",
                 ksFileName: "centos.ks",
+                osVariant: "fedora7",
                 createdAt: new Date(),
                 updatedAt: new Date()
             }

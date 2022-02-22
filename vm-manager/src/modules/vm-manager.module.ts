@@ -8,9 +8,10 @@ import { VirtCloneService } from "../services/virt-clone.service";
 import { TimezoneService } from "../services/timezone.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { config } from "../../../auth/src/config";
-import { User } from "@shared/db-entities/user.entity";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 import { IsoImageModule } from "./iso-image.module";
+import { ENTITIES } from "@shared/db-entities";
+import { VmInstanceModule } from "./vm-instance.module";
+import { NetworkService } from "../services/network.service";
 
 @Module({
     imports: [
@@ -18,11 +19,11 @@ import { IsoImageModule } from "./iso-image.module";
         TypeOrmModule.forRoot({
             type: "mysql",
             ...config.db,
-            entities: [User, OperatingSystem],
-            synchronize: true,
+            entities: ENTITIES,
             autoLoadEntities: true
         }),
-        IsoImageModule
+        IsoImageModule,
+        VmInstanceModule
     ],
     controllers: [VmManagerController],
     providers: [
@@ -30,7 +31,8 @@ import { IsoImageModule } from "./iso-image.module";
         VirtCloneService,
         VirshService,
         TimezoneService,
-        ExecService
+        ExecService,
+        NetworkService
     ]
 })
 export class VmManagerModule {}

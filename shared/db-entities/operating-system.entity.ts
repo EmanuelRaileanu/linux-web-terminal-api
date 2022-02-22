@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToMany } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { BaseDBEntity } from "@shared/db-entities/base-db.entity";
-import { User } from "@shared/db-entities/user.entity";
+import { VmInstance } from "@shared/db-entities/vm-instance.entity";
 
 @Entity("operating_systems")
 export class OperatingSystem extends BaseDBEntity {
@@ -10,6 +10,9 @@ export class OperatingSystem extends BaseDBEntity {
     @Column({ name: "ks_file" })
     ksFileName: string;
 
-    @ManyToMany(() => User, user => user.operatingSystems)
-    users?: User[];
+    @Column({name: "os_variant"})
+    osVariant: string;
+
+    @OneToMany(() => VmInstance, vmInstance => vmInstance.operatingSystem)
+    vmInstances?: VmInstance;
 }

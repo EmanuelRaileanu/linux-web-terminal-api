@@ -11,7 +11,7 @@ import { UserService } from "../src/services/user.service";
 import { JwtModule } from "@nestjs/jwt";
 import { UserNotFoundError, WrongPasswordError } from "@shared/errors";
 import { ValidateUserResponse } from "@shared/entities";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(LocalStrategy, () => {
     let user: User;
@@ -22,13 +22,12 @@ describe(LocalStrategy, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature(ENTITIES),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    autoLoadEntities: true
                 }),
                 JwtModule.register({
                     secret: config.jwt.secret,

@@ -13,7 +13,8 @@ export const config = {
         port: +(process.env.DB_PORT || 3306),
         username: process.env.DB_USERNAME || "dev",
         password: process.env.DB_PASSWORD || "emanuel",
-        database: process.env.DB_NAME || "linux_web_terminal"
+        database: process.env.DB_NAME || "linux_web_terminal",
+        synchronize: JSON.parse(process.env.SYNC_ON_START || "true")
     },
     testDb: process.env.TEST_DB_NAME || "test",
     redis: {

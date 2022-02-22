@@ -1,6 +1,6 @@
-import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { BaseDBEntity } from "@shared/db-entities/base-db.entity";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { VmInstance } from "@shared/db-entities/vm-instance.entity";
 
 @Entity("users")
 export class User extends BaseDBEntity {
@@ -13,17 +13,6 @@ export class User extends BaseDBEntity {
     @Column()
     public password: string;
 
-    @ManyToMany(() => OperatingSystem, os => os.users)
-    @JoinTable({
-        name: "users_operating_systems",
-        joinColumn: {
-            name: "user_id",
-            referencedColumnName: "id"
-        },
-        inverseJoinColumn: {
-            name: "operating_system_id",
-            referencedColumnName: "id"
-        }
-    })
-    operatingSystems?: OperatingSystem[];
+    @OneToMany(() => VmInstance, vmInstance => vmInstance.user)
+    vmInstances?: VmInstance[];
 }

@@ -10,11 +10,16 @@ import { PassportModule } from "@nestjs/passport";
 import { LocalStrategy } from "../src/strategies/local.strategy";
 import { JwtStrategy } from "../src/strategies/jwt.strategy";
 import * as bcrypt from "bcryptjs";
-import { PasswordsDoNotMatchError, UserAlreadyExistsError, UserNotFoundError, WrongPasswordError } from "@shared/errors";
+import {
+    PasswordsDoNotMatchError,
+    UserAlreadyExistsError,
+    UserNotFoundError,
+    WrongPasswordError
+} from "@shared/errors";
 import { RegisterRequest } from "../src/entities/auth.entities";
 import { CacheModule } from "@nestjs/common";
 import { ValidateUserResponse } from "@shared/entities";
-import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 describe(AuthService, () => {
     let users: User[];
@@ -26,13 +31,12 @@ describe(AuthService, () => {
     beforeAll(async () => {
         moduleRef = await Test.createTestingModule({
             imports: [
-                TypeOrmModule.forFeature([User, OperatingSystem]),
+                TypeOrmModule.forFeature(ENTITIES),
                 TypeOrmModule.forRoot({
                     type: "mysql",
                     ...config.db,
                     database: config.testDb,
-                    autoLoadEntities: true,
-                    synchronize: true
+                    autoLoadEntities: true
                 }),
                 PassportModule,
                 JwtModule.register({
@@ -152,6 +156,6 @@ describe(AuthService, () => {
             username: "Tom",
             email: "tom@earth.com"
         };
-       return expect(authService.logout(payload)).resolves.toEqual(undefined);
+        return expect(authService.logout(payload)).resolves.toEqual(undefined);
     });
 });

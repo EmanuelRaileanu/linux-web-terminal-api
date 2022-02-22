@@ -2,11 +2,12 @@ import { readFile } from "fs/promises";
 import { Connection, createConnection, getRepository } from "typeorm";
 import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 import { config } from "../auth/src/config";
-import { User } from "@shared/db-entities/user.entity";
+import { ENTITIES } from "@shared/db-entities";
 
 interface IsoImageEntry {
-    isoFile: string;
-    ksFile: string;
+    isoFileName: string;
+    ksFileName: string;
+    osVariant: string;
 }
 
 interface JsonSeedFile {
@@ -17,8 +18,7 @@ const createDBConnection = (): Promise<Connection> => {
     return createConnection({
         type: "mysql",
         ...config.db,
-        entities: [User, OperatingSystem],
-        synchronize: true
+        entities: ENTITIES
     });
 };
 
@@ -27,10 +27,7 @@ const seedDatabase = async (json: JsonSeedFile): Promise<void> => {
     const osRepository = getRepository(OperatingSystem);
 
     for (const isoImage of json.isoImages) {
-        await osRepository.insert({
-            isoFileName: isoImage.isoFile,
-            ksFileName: isoImage.ksFile
-        });
+        await osRepository.insert(isoImage);
     }
 };
 
