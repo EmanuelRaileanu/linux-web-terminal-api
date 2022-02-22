@@ -1,9 +1,0 @@
-{
-    "isoImages": [
-        {
-            "isoFile": "example.iso",
-            "ksFile": "example.ks",
-            "osVariant": "ubuntu18.04"
-        }
-    ]
-}
