@@ -82,7 +82,7 @@ export class VirshService implements IVirshService {
         const netUpdateCommand = `virsh net-update \
             --network ${config.kvmNetworkName} \
             --command add-last \
-            --section ip-dhcp-host
+            --section ip-dhcp-host \
             --xml "${xml}" \
             --live \
             --config\
