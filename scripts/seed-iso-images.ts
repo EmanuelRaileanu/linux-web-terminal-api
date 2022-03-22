@@ -34,7 +34,7 @@ const seedDatabase = async (json: JsonSeedFile): Promise<void> => {
 const run = async () => {
     const rawJsonFile = await readFile("seed-iso.json");
     const json: JsonSeedFile = JSON.parse(rawJsonFile.toString());
-    if (!json || !json.isoImages || !json.isoImages.length) {
+    if (!json?.isoImages?.length) {
         return;
     }
     return seedDatabase(json);

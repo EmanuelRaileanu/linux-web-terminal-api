@@ -2,9 +2,9 @@
     "collection": "@nestjs/schematics",
     "sourceRoot": ".",
     "projects": {
-        "api": {
+        "ssh-service": {
             "type": "application",
-            "entryFile": "api/src/main"
+            "entryFile": "ssh-service/src/main"
         },
         "auth": {
             "type": "application",

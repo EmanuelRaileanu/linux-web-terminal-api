@@ -7,9 +7,9 @@ import { OpenAPIObject } from "@nestjs/swagger";
 import { readFileSync } from "fs";
 
 const swaggerConfig: SwaggerConfig = {
-    path: "api/v1/docs",
+    path: "ssh-service/v1/docs",
     title: "Auth",
-    description: "Authentication api using JWT",
+    description: "Authentication ssh-service using JWT",
     tag: "AuthAPI",
     version: "1.0",
     swaggerDoc: swaggerDoc as OpenAPIObject
