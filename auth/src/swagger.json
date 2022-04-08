@@ -1,5 +1,11 @@
 {
-    "openapi": "3.0.0",
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Auth",
+        "description": "Authentication api using JWT",
+        "version": "1.0",
+        "contact": {}
+    },
     "servers": [
         {
             "url": "{schema}://{domain}",
@@ -314,12 +320,6 @@
                 }
             }
         }
-    },
-    "info": {
-        "title": "Auth",
-        "description": "Authentication api using JWT",
-        "version": "1.0",
-        "contact": {}
     },
     "tags": [
         {

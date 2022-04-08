@@ -33,7 +33,7 @@ export class VmInstance extends BaseDBEntity {
     networkInterface: string;
 
     @ManyToOne(() => User, user => user.vmInstances)
-    @JoinColumn({ name: "userId" })
+    @JoinColumn({ name: "user_id" })
     user: User;
 
     @ManyToOne(() => OperatingSystem, os => os.vmInstances)

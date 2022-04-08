@@ -137,6 +137,22 @@ describe(VmInstanceService, () => {
         expect(vmInstances.map(vmi => vmi.ip)).toEqual(ips);
     });
 
+    test("Getting all the vm instances of one user successfully", () => {
+        return expect(vmInstanceService.findAllForUser(users[0])).resolves.toEqual([vmInstances[0]]);
+    });
+
+    test("Getting all the vm instances of a non-existent user returning empty array", () => {
+        const fakeUser: User = {
+            id: "d8cc557a-9418-4a67-a35b-23dd869804ca",
+            username: "fake",
+            password: "password",
+            email: "faker@email.com",
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+        return expect(vmInstanceService.findAllForUser(fakeUser)).resolves.toEqual([]);
+    });
+
     test("Finding vm instance by id successfully", () => {
         return expect(vmInstanceService.findById(vmInstances[0].id)).resolves.toEqual(vmInstances[0]);
     });

@@ -1,0 +1,31 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Title",
+        "description": "Title",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "{schema}://{domain}",
+            "variables": {
+                "schema": {
+                    "default": "http",
+                    "enum": [
+                        "http",
+                        "https"
+                    ]
+                },
+                "domain": {
+                    "default": "localhost:8002",
+                    "enum": [
+                        "localhost:8002"
+                    ]
+                }
+            }
+        }
+    ],
+    "paths": {
+
+    }
+}
