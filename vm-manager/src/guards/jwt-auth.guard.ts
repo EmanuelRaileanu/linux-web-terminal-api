@@ -24,6 +24,7 @@ export class JwtAuthGuard implements CanActivate {
                 }
             }
         );
+        console.log(request.user, JwtAuthGuard.AUTH_SERVICE_VALIDATE_TOKEN_URL);
 
         return true;
     }
