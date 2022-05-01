@@ -24,11 +24,10 @@ export class VmInstanceService implements IVmInstanceService {
     }
 
     public findAllForUser(user: User): Promise<VmInstance[]> {
-        console.log(user);
         return this.vmInstanceRepository
             .createQueryBuilder()
             .where("user_id = :userId", { userId: user.id })
-            .getMany();
+            .execute();
     }
 
     public findById(id: string): Promise<VmInstance | undefined> {
