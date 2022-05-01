@@ -12,7 +12,7 @@ import { Server, Socket } from "socket.io";
 import { SSHService } from "./services/ssh.service";
 
 const sshConfig = {
-    host: "192.168.1.101",
+    host: "192.168.1.100",
     username: "emanuel",
     password: "emanuelserver"
 };

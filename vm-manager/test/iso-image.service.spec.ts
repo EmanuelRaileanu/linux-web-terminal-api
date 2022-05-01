@@ -35,7 +35,7 @@ describe(IsoImageService, () => {
         isoImages = [
             {
                 id: "4811847d-ce29-4057-8244-3949f0c68538",
-                isoFileName: "image11.iso",
+                isoFileName: "image21.iso",
                 ksFileName: "debian.ks",
                 osVariant: "debian",
                 createdAt: new Date(),
@@ -43,7 +43,7 @@ describe(IsoImageService, () => {
             },
             {
                 id: "cf6f912b-3f27-4f92-b104-4853ada60cee",
-                isoFileName: "image12.iso",
+                isoFileName: "image22.iso",
                 ksFileName: "centos.ks",
                 osVariant: "fedora7",
                 createdAt: new Date(),
