@@ -35,12 +35,11 @@ export class VmManagerController {
     }
 
     @Get("timezones")
-    public getAllTimezones(@Request() req: UserEntityHolder): Promise<string[]> {
-        console.log(req.user);
+    public getAllTimezones(): Promise<string[]> {
         return this.timezoneService.getAllTimezones();
     }
 
-    @Get("vm-instances")
+    @Get("virtual-machines")
     public getUserVirtualMachines(@Request() req: UserEntityHolder): Promise<VmInstance[]> {
         return this.vmInstanceService.findAllForUser(req.user);
     }
