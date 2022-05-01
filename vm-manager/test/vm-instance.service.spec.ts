@@ -138,7 +138,7 @@ describe(VmInstanceService, () => {
     });
 
     test("Getting all the vm instances of one user successfully", () => {
-        return expect(vmInstanceService.findAllForUser(users[0])).resolves.toEqual([vmInstances[0]]);
+        return expect(vmInstanceService.findAllForUser(users[0] as SessionUserEntity)).resolves.toEqual([vmInstances[0]]);
     });
 
     test("Getting all the vm instances of a non-existent user returning empty array", () => {
@@ -150,7 +150,7 @@ describe(VmInstanceService, () => {
             createdAt: new Date(),
             updatedAt: new Date()
         };
-        return expect(vmInstanceService.findAllForUser(fakeUser)).resolves.toEqual([]);
+        return expect(vmInstanceService.findAllForUser(fakeUser as SessionUserEntity)).resolves.toEqual([]);
     });
 
     test("Finding vm instance by id successfully", () => {

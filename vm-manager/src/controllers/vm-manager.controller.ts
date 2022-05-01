@@ -16,7 +16,6 @@ import { UserEntityHolder } from "../../../auth/src/entities/auth.entities";
 import { PermissionsGuard } from "../guards/permissions.guard";
 import { VmInstance } from "@shared/db-entities/vm-instance.entity";
 import { VmInstanceService } from "../services/vm-instance.service";
-import { User } from "@shared/db-entities/user.entity";
 
 @UseGuards(JwtAuthGuard)
 @Controller("api/v1")
@@ -40,9 +39,9 @@ export class VmManagerController {
         return this.timezoneService.getAllTimezones();
     }
 
-    @Get("virtual-machines")
+    @Get("vm-instances")
     public getUserVirtualMachines(@Request() req: UserEntityHolder): Promise<VmInstance[]> {
-        return this.vmInstanceService.findAllForUser(req.user as User);
+        return this.vmInstanceService.findAllForUser(req.user);
     }
 
     @Post("virtual-machines")

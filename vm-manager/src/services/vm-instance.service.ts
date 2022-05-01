@@ -23,11 +23,13 @@ export class VmInstanceService implements IVmInstanceService {
         return this.extractColumn("ip");
     }
 
-    public findAllForUser(user: User): Promise<VmInstance[]> {
+    public findAllForUser(user: SessionUserEntity): Promise<VmInstance[]> {
         return this.vmInstanceRepository
-            .createQueryBuilder()
+            .createQueryBuilder("vmInstance")
+            .leftJoinAndSelect("vmInstance.user", "users")
+            .leftJoinAndSelect("vmInstance.operatingSystem", "operating_system")
             .where("user_id = :userId", { userId: user.id })
-            .execute();
+            .getMany();
     }
 
     public findById(id: string): Promise<VmInstance | undefined> {
