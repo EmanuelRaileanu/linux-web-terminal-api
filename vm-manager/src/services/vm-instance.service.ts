@@ -56,7 +56,6 @@ export class VmInstanceService implements IVmInstanceService {
 
     private async findSessionUser(user: SessionUserEntity): Promise<User> {
         const userEntity = await this.userRepository.findOne(user.id);
-        console.log(userEntity, user, user.id);
         if (!userEntity) {
             throw new UserNotFoundError("Session user entity not found");
         }
