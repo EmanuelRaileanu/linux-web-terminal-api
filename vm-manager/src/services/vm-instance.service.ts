@@ -24,7 +24,7 @@ export class VmInstanceService implements IVmInstanceService {
     }
 
     public findAllForUser(user: User): Promise<VmInstance[]> {
-        return this.vmInstanceRepository.find({ where: { user: user as User }, relations: ["user", "operatingSystem"] });
+        return this.vmInstanceRepository.find({ where: { user: user as User }, relations: ["operatingSystem"] });
     }
 
     public findById(id: string): Promise<VmInstance | undefined> {
