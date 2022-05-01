@@ -35,7 +35,8 @@ export class VmManagerController {
     }
 
     @Get("timezones")
-    public getAllTimezones(): Promise<string[]> {
+    public getAllTimezones(@Request() req: UserEntityHolder): Promise<string[]> {
+        console.log(req.user);
         return this.timezoneService.getAllTimezones();
     }
 
