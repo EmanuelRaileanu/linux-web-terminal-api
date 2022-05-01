@@ -24,7 +24,7 @@ export class JwtAuthGuard implements CanActivate {
             }
         ).toPromise();
 
-        if (!observable?.data?.success) {
+        if (!observable?.data) {
             return false;
         }
 
