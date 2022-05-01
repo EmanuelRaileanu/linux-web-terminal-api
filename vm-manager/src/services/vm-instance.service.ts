@@ -24,13 +24,7 @@ export class VmInstanceService implements IVmInstanceService {
     }
 
     public findAllForUser(user: SessionUserEntity): Promise<VmInstance[]> {
-        console.log(user, user.id);
-        return this.vmInstanceRepository
-            .createQueryBuilder("vmInstance")
-            .leftJoinAndSelect("vmInstance.user", "users")
-            .leftJoinAndSelect("vmInstance.operatingSystem", "operating_system")
-            .where("user_id = :userId", { userId: user.id })
-            .getMany();
+        return this.vmInstanceRepository.find({ where: { user: user }, relations: ["user", "operatingSystem"] });
     }
 
     public findById(id: string): Promise<VmInstance | undefined> {

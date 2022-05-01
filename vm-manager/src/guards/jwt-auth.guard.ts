@@ -16,7 +16,7 @@ export class JwtAuthGuard implements CanActivate {
         const bearerToken = request.headers.authorization;
         const jwt = validateBearerToken(bearerToken);
 
-        const user = await this.httpService.get<SessionUserEntity>(
+        request.user = await this.httpService.get<SessionUserEntity>(
             JwtAuthGuard.AUTH_SERVICE_VALIDATE_TOKEN_URL,
             {
                 headers: {
@@ -24,9 +24,7 @@ export class JwtAuthGuard implements CanActivate {
                 }
             }
         );
-        console.log(user, JwtAuthGuard.AUTH_SERVICE_VALIDATE_TOKEN_URL);
 
-        request.user = user;
         return true;
     }
 }
