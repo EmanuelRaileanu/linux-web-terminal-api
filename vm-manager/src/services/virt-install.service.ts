@@ -82,7 +82,7 @@ export class VirtInstallService implements IVirtInstallService {
         if (stderr) {
             throw new VirtInstallError(stderr);
         }
-        console.log(user);
+        console.log(user, user.id);
         const vmInstanceEntity = await this.vmInstanceService.create(user, {
             name: vmName,
             username: options.username,
