@@ -38,7 +38,6 @@ export class VmInstanceService implements IVmInstanceService {
     public async create(user: SessionUserEntity, payload: CreateVmInstanceRequest): Promise<VmInstance> {
         const vmInstanceEntity = await this.vmInstanceRepository.create(payload);
         vmInstanceEntity.user = await this.findSessionUser(user);
-        console.log(vmInstanceEntity);
         return this.vmInstanceRepository.save(vmInstanceEntity);
     }
 
@@ -57,6 +56,7 @@ export class VmInstanceService implements IVmInstanceService {
 
     private async findSessionUser(user: SessionUserEntity): Promise<User> {
         const userEntity = await this.userRepository.findOne(user.id);
+        console.log(userEntity, userEntity?.id);
         if (!userEntity) {
             throw new UserNotFoundError("Session user entity not found");
         }
