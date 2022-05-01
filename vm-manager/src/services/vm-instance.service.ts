@@ -37,7 +37,7 @@ export class VmInstanceService implements IVmInstanceService {
 
     public async create(user: SessionUserEntity, payload: CreateVmInstanceRequest): Promise<VmInstance> {
         const vmInstanceEntity = await this.vmInstanceRepository.create(payload);
-        console.log(user, user.id);
+        console.log(payload);
         vmInstanceEntity.user = await this.findSessionUser(user);
         return this.vmInstanceRepository.save(vmInstanceEntity);
     }
