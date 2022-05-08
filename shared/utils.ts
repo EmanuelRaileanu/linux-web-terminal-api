@@ -54,7 +54,6 @@ const setupSwagger = (app: INestApplication, swaggerConfig: SwaggerConfig): void
     } else {
         SwaggerModule.setup(swaggerConfig.path, app, swaggerConfig.swaggerDoc);
     }
-    app.use(morgan("tiny"));
 };
 
 export const bootstrapServer = async (module: any, port: number, httpsOptions?: HttpsOptions, swaggerConfig?: SwaggerConfig): Promise<void> => {
@@ -66,6 +65,8 @@ export const bootstrapServer = async (module: any, port: number, httpsOptions?: 
 
     app.useGlobalPipes(new ValidationPipe());
     app.enableCors({ origin: "*" });
+    app.use(morgan("tiny"));
+
     await app.listen(port);
     console.log("Server listening on port " + port);
 };
