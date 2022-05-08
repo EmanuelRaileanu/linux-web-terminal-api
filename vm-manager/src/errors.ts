@@ -72,7 +72,7 @@ export class TimezoneNotFoundError extends NotFoundException {
     }
 }
 
-export class TimezoneMatchesMultipleItems extends ConflictException {
+export class TimezoneMatchesMultipleItemsError extends ConflictException {
     constructor(timezone: string, foundTimezones: string[]) {
         super(`${timezone} matches multiple items: ${foundTimezones}`);
     }

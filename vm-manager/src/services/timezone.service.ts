@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { ExecService } from "./exec.service";
 import { ITimezoneService } from "../entities/ITimezoneService";
-import { TimezoneMatchesMultipleItems, TimezoneNotFoundError, TimezoneServiceError } from "../errors";
+import {
+    TimezoneMatchesMultipleItemsError,
+    TimezoneNotFoundError,
+    TimezoneServiceError
+} from "../errors";
 
 @Injectable()
 export class TimezoneService implements ITimezoneService {
@@ -33,7 +37,7 @@ export class TimezoneService implements ITimezoneService {
         }
         const timezones = stdout.split("\n").filter(tz => tz !== "");
         if (timezones.length > 1) {
-            throw new TimezoneMatchesMultipleItems(timezone, timezones);
+            throw new TimezoneMatchesMultipleItemsError(timezone, timezones);
         }
         return timezones[0];
     }

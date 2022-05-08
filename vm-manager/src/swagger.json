@@ -1,9 +1,10 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "Title",
-        "description": "Title",
-        "version": "1.0.0"
+        "title": "VM Manager",
+        "description": "VM Manager API",
+        "version": "1.0.0",
+        "contact": {}
     },
     "servers": [
         {
@@ -26,6 +27,824 @@
         }
     ],
     "paths": {
-
+        "/api/v1/iso-images": {
+            "get": {
+                "tags": [
+                    "Iso Images"
+                ],
+                "operationId": "VmManagerController.getAvailableIsoImages",
+                "description": "Get available iso images",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "example": "linux-image1.iso"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/timezones": {
+            "get": {
+                "tags": [
+                    "Timezones"
+                ],
+                "operationId": "VmManagerController.getAllTimezones",
+                "description": "Get all available timezones",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "example": "Europe/Berlin"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TimezoneServiceError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/virtual-machines": {
+            "get": {
+                "tags": [
+                    "Virtual Machines"
+                ],
+                "operationId": "VmManagerController.listAllVirtualMachines",
+                "description": "List all virtual machines",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "example": "vm-1"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Virtual Machines"
+                ],
+                "operationId": "VmManagerController.createVirtualMachine",
+                "description": "Create a virtual machine",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateVirtualMachineRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommandLineResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/IsoImageNotFoundError"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/TimezoneNotFoundError"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/UserNotFoundError"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TimezoneMatchesMultipleItemsError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/TimezoneServiceError"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/VirshNetUpdateError"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/VirtInstallError"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/virtual-machines/clone": {
+            "post": {
+                "tags": [
+                    "Virtual Machines"
+                ],
+                "operationId": "VmManagerController.clone",
+                "description": "Clone a virtual machine",
+                "requestBody": {
+                    "description": "Clone a virtual machine",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CloneVirtualMachineRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommandLineResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/VmInstanceNotFoundError"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/UserNotFoundError"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VirtCloneError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/virtual-machines/{vmName}": {
+            "delete": {
+                "tags": [
+                    "Virtual Machines"
+                ],
+                "operationId": "VmManagerController.destroy",
+                "description": "Destroy a virtual machine",
+                "parameters": [
+                    {
+                        "name": "vmName",
+                        "in": "path",
+                        "description": "Virtual machine name",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommandLineResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VirshUndefineError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/virtual-machines/{vmName}/start": {
+            "get": {
+                "tags": [
+                    "Virtual Machines"
+                ],
+                "operationId": "VmManagerController.start",
+                "description": "Start a virtual machine",
+                "parameters": [
+                    {
+                        "name": "vmName",
+                        "in": "path",
+                        "description": "Virtual machine name",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommandLineResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VirshStartError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/virtual-machines/{vmName}/shutdown": {
+            "get": {
+                "tags": [
+                    "Virtual Machines"
+                ],
+                "operationId": "VmManagerController.shutdown",
+                "description": "Shutdown a virtual machine",
+                "parameters": [
+                    {
+                        "name": "vmName",
+                        "in": "path",
+                        "description": "Virtual machine name",
+                        "required": true
+                    },
+                    {
+                        "name": "forced",
+                        "in": "query",
+                        "description": "Force shutdown flag",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommandLineResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/VirshShutDownError"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/VirshForcedShutDownError"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/vm-instances": {
+            "get": {
+                "tags": [
+                    "VM Instances"
+                ],
+                "operationId": "VmManagerController.getUserVirtualMachines",
+                "description": "Get all the virtual machines of the currently logged in user",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/VmInstance"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Iso Images",
+            "description": "Endpoints for fetching iso images"
+        },
+        {
+            "name": "Timezones",
+            "description": "Endpoints for fetching available timezones"
+        },
+        {
+            "name": "Virtual Machines",
+            "description": "Endpoints for performing vm operations"
+        },
+        {
+            "name": "VM Instances",
+            "description": "Endpoints for fetching user vm instances"
+        }
+    ],
+    "security": [
+        {
+            "httpBearer": [ ]
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "httpBearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "CreateVirtualMachineRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "vm-1",
+                        "description": "The name of the virtual machine"
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "user",
+                        "description": "The username of the sudo user of the virtual machine"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "password",
+                        "description": "The password of the sudo user of the virtual machine"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/London",
+                        "description": "The timezone of the virtual machine"
+                    },
+                    "numberOfVirtualCpus": {
+                        "type": "integer",
+                        "example": 2,
+                        "description": "The number of virtual cpus of the virtual machine"
+                    },
+                    "memory": {
+                        "type": "integer",
+                        "example": 1024,
+                        "description": "The memory size of the virtual machine in MB"
+                    },
+                    "diskSize": {
+                        "type": "integer",
+                        "example": 10,
+                        "description": "The disk size of the virtual machine in GB"
+                    },
+                    "isoImage": {
+                        "type": "string",
+                        "example": "debian-9-amd64-netinst.iso",
+                        "description": "The iso image to be used for the virtual machine"
+                    },
+                    "networkInterface": {
+                        "type": "string",
+                        "example": "eth0",
+                        "description": "The network interface to be used for the virtual machine"
+                    }
+                }
+            },
+            "CloneVirtualMachineRequest": {
+                "type": "object",
+                "properties": {
+                    "originalVMName": {
+                        "type": "string",
+                        "example": "vm-1",
+                        "description": "The name of the original virtual machine"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "vm-2",
+                        "description": "The name of the new virtual machine"
+                    }
+                }
+            },
+            "VmInstance": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "vm-1",
+                        "description": "The name of the virtual machine"
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "root",
+                        "description": "The username of the sudo user of the virtual machine"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/London",
+                        "description": "The timezone of the virtual machine"
+                    },
+                    "diskSize": {
+                        "type": "integer",
+                        "example": 10,
+                        "description": "The disk size of the virtual machine in GB"
+                    },
+                    "memory": {
+                        "type": "integer",
+                        "example": 1024,
+                        "description": "The memory size of the virtual machine in MB"
+                    },
+                    "numberOfVirtualCpus": {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "The number of virtual cpus of the virtual machine"
+                    },
+                    "macAddress": {
+                        "type": "string",
+                        "example": "01:3B:5N:78:19:MN",
+                        "description": "The mac address of the virtual machine"
+                    },
+                    "ip": {
+                        "type": "string",
+                        "example": "192.168.122.123",
+                        "description": "The ip address of the virtual machine"
+                    },
+                    "networkInterface": {
+                        "type": "string",
+                        "example": "eth0",
+                        "description": "The network interface of the virtual machine"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "operatingSystem": {
+                        "$ref": "#/components/schemas/OperatingSystem"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "username": {
+                        "type": "string",
+                        "example": "username123",
+                        "description": "The username of the user"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "OperatingSystem": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "isoFileName": {
+                        "type": "string",
+                        "example": "ubuntu-18.04.iso",
+                        "description": "The name of the iso file"
+                    },
+                    "ksFileName": {
+                        "type": "string",
+                        "example": "ubuntu-18.04.ks",
+                        "description": "The name of the ks file"
+                    },
+                    "osVariant": {
+                        "type": "string",
+                        "example": "ubuntu",
+                        "description": "The os variant"
+                    }
+                }
+            },
+            "CommandLineResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Command executed successfully",
+                        "description": "The message of the command line response"
+                    },
+                    "consoleOutput": {
+                        "type": "string",
+                        "example": "Exact command line output",
+                        "description": "The console output of the command line response"
+                    },
+                    "entity": {
+                        "type": "object",
+                        "description": "The entity created after the command line response"
+                    }
+                }
+            },
+            "TimezoneServiceError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "timedatectl error: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "IsoImageNotFoundError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 404
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Iso image not found"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Not Found"
+                    }
+                }
+            },
+            "TimezoneNotFoundError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 404
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Timezone <timezone> wasn't found ont he system"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Not Found"
+                    }
+                }
+            },
+            "TimezoneMatchesMultipleItemsError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 409
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "<timezone> matches multiple items: <timezones[]>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Conflict"
+                    }
+                }
+            },
+            "VirshNetUpdateError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virsh net-update: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "VirtInstallError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "number",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virt-install: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "UserNotFoundError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 404
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "User not found"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Not Found"
+                    }
+                }
+            },
+            "VirtCloneError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virt-clone: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "VmInstanceNotFoundError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 404
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "VM instance not found"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Not Found"
+                    }
+                }
+            },
+            "VirshStartError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virsh start: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "VirshShutDownError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virsh shutdown: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "VirshForcedShutDownError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virsh destroy: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "VirshUndefineError": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "string",
+                        "example": 500
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "virsh undefine: <error_message>"
+                    },
+                    "error": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            }
+        }
     }
 }

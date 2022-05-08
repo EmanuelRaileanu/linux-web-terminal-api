@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    ClassSerializerInterceptor,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Query,
+    Request,
+    UseGuards,
+    UseInterceptors
+} from "@nestjs/common";
 import { VirtInstallService } from "../services/virt-install.service";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import {
@@ -18,6 +30,7 @@ import { VmInstance } from "@shared/db-entities/vm-instance.entity";
 import { VmInstanceService } from "../services/vm-instance.service";
 
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller("api/v1")
 export class VmManagerController {
     constructor(
@@ -39,9 +52,9 @@ export class VmManagerController {
         return this.timezoneService.getAllTimezones();
     }
 
-    @Get("vm-instances")
-    public getUserVirtualMachines(@Request() req: UserEntityHolder): Promise<VmInstance[]> {
-        return this.vmInstanceService.findAllForUser(req.user);
+    @Get("virtual-machines")
+    public getAll(): Promise<string[]> {
+        return this.virshService.listAllVirtualMachines();
     }
 
     @Post("virtual-machines")
@@ -53,11 +66,6 @@ export class VmManagerController {
     @Post("virtual-machines/clone")
     public clone(@Request() req: UserEntityHolder, @Body() options: CloneVirtualMachineOptions): Promise<ResponseFromStdout> {
         return this.virtCloneService.cloneVirtualMachine(req.user, options);
-    }
-
-    @Get("virtual-machines")
-    public getAll(): Promise<string[]> {
-        return this.virshService.listAllVirtualMachines();
     }
 
     @UseGuards(PermissionsGuard)
@@ -78,5 +86,10 @@ export class VmManagerController {
     @Delete("virtual-machines/:vmName")
     public destroy(@Param() params: VmToggleParams): Promise<ResponseFromStdout> {
         return this.virshService.destroyVirtualMachine(params.vmName);
+    }
+
+    @Get("vm-instances")
+    public getUserVirtualMachines(@Request() req: UserEntityHolder): Promise<VmInstance[]> {
+        return this.vmInstanceService.findAllForUser(req.user);
     }
 }
