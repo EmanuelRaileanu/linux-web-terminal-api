@@ -65,6 +65,7 @@ export const bootstrapServer = async (module: any, port: number, httpsOptions?: 
     }
 
     app.useGlobalPipes(new ValidationPipe());
+    app.enableCors({ origin: "*" });
     await app.listen(port);
     console.log("Server listening on port " + port);
 };
