@@ -10,12 +10,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
 import { SSHService } from "./services/ssh.service";
-
-const sshConfig = {
-    host: "192.168.1.100",
-    username: "emanuel",
-    password: "emanuelserver"
-};
+import { SSHInitRequest } from "./entities";
 
 @WebSocketGateway({ cors: true })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -42,8 +37,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     }
 
     @SubscribeMessage("ssh")
-    public async handleSSHConnection(client: Socket, payload: any): Promise<WsResponse> {
-        await this.sshService.establishSSHConnection(client, sshConfig);
+    public async handleSSHConnection(client: Socket, payload: SSHInitRequest): Promise<WsResponse> {
+        await this.sshService.establishSSHConnection(client, payload);
         this.logger.log("SSH Connection established");
         return { event: "ssh-connection", data: "Connection established" };
     }
