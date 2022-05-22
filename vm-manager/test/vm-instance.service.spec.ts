@@ -10,6 +10,7 @@ import { OperatingSystem } from "@shared/db-entities/operating-system.entity";
 import { SessionUserEntity } from "@shared/entities";
 import { CreateVmInstanceRequest } from "../src/entities/vm-manager.entities";
 import { UserNotFoundError } from "@shared/errors";
+import { VmInstanceNotFoundError } from "../src/errors";
 
 describe(VmInstanceService, () => {
     let moduleRef: TestingModule;
@@ -157,16 +158,16 @@ describe(VmInstanceService, () => {
         return expect(vmInstanceService.findById(vmInstances[0].id)).resolves.toEqual(vmInstances[0]);
     });
 
-    test("Finding vm instance by id returning undefined when the vm instance doesn't exist", () => {
-        return expect(vmInstanceService.findById("2fe3b492-ff9b-4ea4-b815-e46f3e4aa8b1")).resolves.toEqual(undefined);
+    test("Finding vm instance by id throwing VmInstanceNotFoundError when the vm instance doesn't exist", () => {
+        return expect(vmInstanceService.findById("2fe3b492-ff9b-4ea4-b815-e46f3e4aa8b1")).rejects.toThrowError(VmInstanceNotFoundError);
     });
 
     test("Finding vm instance by name successfully", () => {
         return expect(vmInstanceService.findByName(vmInstances[0].name)).resolves.toEqual(vmInstances[0]);
     });
 
-    test("Finding vm instance by name returning undefined when the vm instance doesn't exist", () => {
-        return expect(vmInstanceService.findByName("instance-3")).resolves.toEqual(undefined);
+    test("Finding vm instance by name thrown VmInstanceNotFoundError when the vm instance doesn't exist", () => {
+        return expect(vmInstanceService.findByName("instance-3")).rejects.toThrowError(VmInstanceNotFoundError);
     });
 
     test("Creating VM instance successfully", async () => {
@@ -227,7 +228,7 @@ describe(VmInstanceService, () => {
     test("Deleting VM instance by id successfully", async () => {
         const id = vmInstances[0].id;
         await vmInstanceService.deleteById(id);
-        return expect(vmInstanceService.findById(id)).resolves.toEqual(undefined);
+        return expect(vmInstanceService.findById(id)).rejects.toThrowError(VmInstanceNotFoundError);
     });
 
     test("Deleting VM instance by id returns undefined when the VM instance doesn't exist", () => {
@@ -238,7 +239,7 @@ describe(VmInstanceService, () => {
     test("Deleting VM instance by name successfully", async () => {
         const name = vmInstances[1].name;
         await vmInstanceService.deleteByVmName(name);
-        return expect(vmInstanceService.findByName(name)).resolves.toEqual(undefined);
+        return expect(vmInstanceService.findByName(name)).rejects.toThrowError(VmInstanceNotFoundError);
     });
 
     test("Deleting VM instance by name returns undefined when the VM instance doesn't exist", () => {

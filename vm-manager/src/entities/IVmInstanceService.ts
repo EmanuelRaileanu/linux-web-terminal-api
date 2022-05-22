@@ -7,9 +7,9 @@ export interface IVmInstanceService {
 
     getAllMacAddressesInUse(): Promise<string[]>;
 
-    findById(id: string): Promise<VmInstance | undefined>;
+    findById(id: string): Promise<VmInstance>;
 
-    findByName(vmName: string): Promise<VmInstance | undefined>;
+    findByName(vmName: string): Promise<VmInstance>;
 
     create(user: SessionUserEntity, payload: CreateVmInstanceRequest): Promise<VmInstance>;
 

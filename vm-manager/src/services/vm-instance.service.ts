@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 import { SessionUserEntity } from "@shared/entities";
 import { User } from "@shared/db-entities/user.entity";
 import { UserNotFoundError } from "@shared/errors";
+import { VmInstanceNotFoundError } from "../errors";
 
 @Injectable()
 export class VmInstanceService implements IVmInstanceService {
@@ -27,12 +28,23 @@ export class VmInstanceService implements IVmInstanceService {
         return this.vmInstanceRepository.find({ where: { user: user }, relations: ["user", "operatingSystem"] });
     }
 
-    public findById(id: string): Promise<VmInstance | undefined> {
-        return this.vmInstanceRepository.findOne(id, { relations: ["user", "operatingSystem"] });
+    public async findById(id: string): Promise<VmInstance> {
+        const vmInstance = await this.vmInstanceRepository.findOne(id, { relations: ["user", "operatingSystem"] });
+        if (!vmInstance) {
+            throw new VmInstanceNotFoundError();
+        }
+        return vmInstance;
     }
 
-    public findByName(vmName: string): Promise<VmInstance | undefined> {
-        return this.vmInstanceRepository.findOne({ name: vmName }, { relations: ["user", "operatingSystem"] });
+    public async findByName(vmName: string): Promise<VmInstance> {
+        const vmInstance = await this.vmInstanceRepository.findOne(
+            { name: vmName },
+            { relations: ["user", "operatingSystem"] }
+        );
+        if (!vmInstance) {
+            throw new VmInstanceNotFoundError();
+        }
+        return vmInstance;
     }
 
     public async create(user: SessionUserEntity, payload: CreateVmInstanceRequest): Promise<VmInstance> {

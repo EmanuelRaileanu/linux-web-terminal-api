@@ -82,5 +82,4 @@ export class VmInstanceNotFoundError extends NotFoundException {
     constructor() {
         super("VM instance not found");
     }
-
 }

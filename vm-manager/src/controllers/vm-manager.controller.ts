@@ -18,7 +18,7 @@ import {
     CreateVirtualMachineOptions,
     ResponseFromStdout,
     VmShutDownQueryParams,
-    VmToggleParams
+    VmParams
 } from "../entities/vm-manager.entities";
 import { VirtCloneService } from "../services/virt-clone.service";
 import { VirshService } from "../services/virsh.service";
@@ -39,7 +39,7 @@ export class VmManagerController {
         private readonly virtCloneService: VirtCloneService,
         private readonly isoImageService: IsoImageService,
         private readonly timezoneService: TimezoneService,
-        private readonly virshService: VirshService,
+        private readonly virshService: VirshService
     ) {}
 
     @Get("iso-images")
@@ -70,13 +70,13 @@ export class VmManagerController {
 
     @UseGuards(PermissionsGuard)
     @Get("virtual-machines/:vmName/start")
-    public start(@Param() params: VmToggleParams): Promise<ResponseFromStdout> {
+    public start(@Param() params: VmParams): Promise<ResponseFromStdout> {
         return this.virshService.startVirtualMachine(params.vmName);
     }
 
     @UseGuards(PermissionsGuard)
     @Get("virtual-machines/:vmName/shutdown")
-    public shutdown(@Param() params: VmToggleParams, @Query() query: VmShutDownQueryParams): Promise<ResponseFromStdout> {
+    public shutdown(@Param() params: VmParams, @Query() query: VmShutDownQueryParams): Promise<ResponseFromStdout> {
         return query.forced && !!+query.forced
             ? this.virshService.forcefullyShutDownVirtualMachine(params.vmName)
             : this.virshService.shutDownVirtualMachine(params.vmName);
@@ -84,12 +84,17 @@ export class VmManagerController {
 
     @UseGuards(PermissionsGuard)
     @Delete("virtual-machines/:vmName")
-    public destroy(@Param() params: VmToggleParams): Promise<ResponseFromStdout> {
+    public destroy(@Param() params: VmParams): Promise<ResponseFromStdout> {
         return this.virshService.destroyVirtualMachine(params.vmName);
     }
 
     @Get("vm-instances")
     public getUserVirtualMachines(@Request() req: UserEntityHolder): Promise<VmInstance[]> {
         return this.vmInstanceService.findAllForUser(req.user);
+    }
+
+    @Get("vm-instances/:vmName")
+    public getUserVirtualMachine(@Request() req: UserEntityHolder, @Param() params: VmParams): Promise<VmInstance> {
+        return this.vmInstanceService.findByName(params.vmName);
     }
 }

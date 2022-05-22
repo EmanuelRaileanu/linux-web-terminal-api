@@ -344,7 +344,11 @@
                         "name": "forced",
                         "in": "query",
                         "description": "Force shutdown flag",
-                        "required": false
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
                     }
                 ],
                 "responses": {
@@ -395,6 +399,45 @@
                                     "items": {
                                         "$ref": "#/components/schemas/VmInstance"
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/vm-instances/{vmName}": {
+            "get": {
+                "tags": [
+                    "VM Instances"
+                ],
+                "operationId": "VmManagerController.getUserVirtualMachine",
+                "description": "Get a virtual machine of the currently logged in user",
+                "parameters": [
+                    {
+                        "name": "vmName",
+                        "in": "path",
+                        "description": "Virtual machine name",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VmInstance"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VmInstanceNotFoundError"
                                 }
                             }
                         }

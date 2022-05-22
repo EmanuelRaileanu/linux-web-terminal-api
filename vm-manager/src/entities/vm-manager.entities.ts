@@ -51,7 +51,7 @@ export class CloneVirtualMachineOptions {
     name: string;
 }
 
-export class VmToggleParams {
+export class VmParams {
     @IsNotEmpty()
     @IsString()
     vmName: string;
