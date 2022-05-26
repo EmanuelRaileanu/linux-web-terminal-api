@@ -2,8 +2,8 @@ import { Body, Controller, HttpCode, HttpStatus, Post, Request, UseFilters, UseG
 import { UserService } from "../services/user.service";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../entities/user.entities";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
-import { UserEntityHolder } from "../entities/auth.entities";
 import { JwtExceptionFilter } from "../filters/jwt-exception.filter";
+import { UserEntityHolder } from "@shared/entities";
 
 @UseFilters(JwtExceptionFilter)
 @UseGuards(JwtAuthGuard)

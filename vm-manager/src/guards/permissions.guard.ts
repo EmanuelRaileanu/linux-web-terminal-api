@@ -1,11 +1,9 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Request } from "express";
-import { UserEntityHolder } from "../../../auth/src/entities/auth.entities";
-
+import { UserEntityHolder } from "@shared/entities";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-
     public async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request & UserEntityHolder = context.switchToHttp().getRequest();
         const user = request.user;

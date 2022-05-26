@@ -8,7 +8,7 @@ import { CacheModule } from "@nestjs/common";
 import * as bcrypt from "bcryptjs";
 import { UserController } from "../src/controllers/user.controller";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "../src/entities/user.entities";
-import { UserEntityHolder } from "../src/entities/auth.entities";
+import { UserEntityHolder } from "@shared/entities";
 import {
     PasswordsDoNotMatchError,
     UserAlreadyExistsError,

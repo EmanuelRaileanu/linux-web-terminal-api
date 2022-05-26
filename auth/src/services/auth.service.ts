@@ -25,7 +25,7 @@ export class AuthService implements IAuthService {
     ) {}
 
     public async validateUser(userName: string, pass: string): Promise<ValidateUserResponse> {
-        const user = await this.userService.findByUsername(userName);
+        const user = await this.userService.findByUsername(userName, ["vmInstances"]);
         if (!user) {
             throw new UserNotFoundError();
         }

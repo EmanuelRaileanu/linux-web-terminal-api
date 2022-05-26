@@ -24,10 +24,10 @@ import { VirtCloneService } from "../services/virt-clone.service";
 import { VirshService } from "../services/virsh.service";
 import { IsoImageService } from "../services/iso-image.service";
 import { TimezoneService } from "../services/timezone.service";
-import { UserEntityHolder } from "../../../auth/src/entities/auth.entities";
 import { PermissionsGuard } from "../guards/permissions.guard";
 import { VmInstance } from "@shared/db-entities/vm-instance.entity";
 import { VmInstanceService } from "../services/vm-instance.service";
+import { UserEntityHolder } from "@shared/entities";
 
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)

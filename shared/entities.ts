@@ -20,3 +20,7 @@ export interface SessionUserEntity extends ValidateUserResponse {
     iat?: number;
     exp?: number;
 }
+
+export interface UserEntityHolder {
+    user: SessionUserEntity;
+}

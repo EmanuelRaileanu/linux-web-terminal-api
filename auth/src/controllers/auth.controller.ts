@@ -2,13 +2,13 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseFilters,
 import { AuthService } from "../services/auth.service";
 import {
     GetProfileResponse,
-    RegisterRequest,
-    UserEntityHolder
+    RegisterRequest
 } from "../entities/auth.entities";
 import { LocalAuthGuard } from "../guards/local-auth.guard";
 import { JwtResponse } from "../entities/jwt.entities";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { JwtExceptionFilter } from "../filters/jwt-exception.filter";
+import { UserEntityHolder } from "@shared/entities";
 
 @Controller("api/v1")
 export class AuthController {

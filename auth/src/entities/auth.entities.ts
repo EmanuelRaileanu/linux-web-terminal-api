@@ -34,7 +34,3 @@ export class RegisterRequest extends CreateUserRequest {
 }
 
 export type GetProfileResponse = SessionUserEntity;
-
-export interface UserEntityHolder {
-    user: SessionUserEntity;
-}
