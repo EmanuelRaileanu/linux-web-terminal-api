@@ -12,10 +12,11 @@ import { LocalStrategy } from "../src/strategies/local.strategy";
 import { JwtStrategy } from "../src/strategies/jwt.strategy";
 import * as bcrypt from "bcryptjs";
 import { AuthController } from "../src/controllers/auth.controller";
-import { RegisterRequest, UserEntityHolder } from "../src/entities/auth.entities";
+import { RegisterRequest } from "../src/entities/auth.entities";
 import { JwtResponse } from "../src/entities/jwt.entities";
 import { PasswordsDoNotMatchError, UserAlreadyExistsError } from "@shared/errors";
 import { ENTITIES } from "@shared/db-entities";
+import { UserEntityHolder } from "@shared/entities";
 
 describe(AuthController, () => {
     let users: User[];

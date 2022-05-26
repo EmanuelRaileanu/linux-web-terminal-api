@@ -61,7 +61,8 @@ describe(LocalStrategy, () => {
         const expectedResponse: ValidateUserResponse = {
             id: user.id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            vmInstances: []
         };
         return expect(localStrategy.validate(user.username, "trivial")).resolves.toEqual(expectedResponse);
     });

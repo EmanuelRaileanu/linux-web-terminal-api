@@ -83,7 +83,8 @@ describe(AuthService, () => {
             .resolves.toEqual({
                 id: users[0].id,
                 username: users[0].username,
-                email: users[0].email
+                email: users[0].email,
+                vmInstances: []
             });
     });
 
