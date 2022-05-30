@@ -93,6 +93,7 @@ export class VmManagerController {
         return this.vmInstanceService.findAllForUser(req.user);
     }
 
+    @UseGuards(PermissionsGuard)
     @Get("vm-instances/:vmName")
     public getUserVirtualMachine(@Request() req: UserEntityHolder, @Param() params: VmParams): Promise<VmInstance> {
         return this.vmInstanceService.findByName(params.vmName);
