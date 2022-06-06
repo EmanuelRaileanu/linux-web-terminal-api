@@ -10,7 +10,7 @@ import {
 import { Logger } from "@nestjs/common";
 import { Server, Socket } from "socket.io";
 import { SSHService } from "./services/ssh.service";
-import { SSHInitRequest } from "./entities";
+import { SSHInitRequest, SSHInstallationInitRequest } from "./entities";
 
 @WebSocketGateway({ cors: true })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -31,15 +31,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 
-    @SubscribeMessage("msgToServer")
-    public handleMessage(client: Socket, payload: any): WsResponse {
-        return { event: "msgToClient", data: payload };
-    }
-
     @SubscribeMessage("ssh")
     public async handleSSHConnection(client: Socket, payload: SSHInitRequest): Promise<WsResponse> {
         await this.sshService.establishSSHConnection(client, payload);
         this.logger.log("SSH Connection established");
         return { event: "ssh-connection", data: "Connection established" };
+    }
+
+    @SubscribeMessage("ssh-installation")
+    public async handleSSHConnectionForInstallation(client: Socket, payload: SSHInstallationInitRequest): Promise<WsResponse> {
+        await this.sshService.establishSSHConnectionForInstallation(client, payload);
+        this.logger.log("SSH Connection established (VM installation)");
+        return { event: "ssh-installation-connection", data: "Connection established" };
     }
 }
