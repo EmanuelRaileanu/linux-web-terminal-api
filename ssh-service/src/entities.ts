@@ -4,6 +4,6 @@ export interface SSHInitRequest {
     password: string;
 }
 
-export interface SSHInstallationInitRequest extends SSHInitRequest {
+export interface SSHInstallationInitRequest {
     vmName: string;
 }

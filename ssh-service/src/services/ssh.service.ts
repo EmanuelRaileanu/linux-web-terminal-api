@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Socket } from "socket.io";
 import { NodeSSH } from "node-ssh";
 import { SSHInitRequest, SSHInstallationInitRequest } from "../entities";
+import { config } from "../config";
 
 @Injectable()
 export class SSHService {
@@ -13,7 +14,7 @@ export class SSHService {
     }
 
     public async establishSSHConnectionForInstallation(ws: Socket, sshConfig: SSHInstallationInitRequest): Promise<void> {
-        await this.ssh.connect(sshConfig);
+        await this.ssh.connect({ ...config.hostMachine, ...sshConfig });
         await this.ssh.execCommand(`virsh console ${sshConfig.vmName}`);
         return this.streamDataThroughShell(ws);
     }
