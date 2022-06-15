@@ -13,14 +13,18 @@ import {
 } from "@shared/errors";
 import * as bcrypt from "bcryptjs";
 import { Cache } from "cache-manager";
-import { SessionUserEntity } from "@shared/entities";
+import { SessionUserEntity, ValidateUserResponse } from "@shared/entities";
 import { IUserService } from "../entities/IUserService";
+import { config } from "../config";
+import { JwtService } from "@nestjs/jwt";
+import { JwtResponse } from "../entities/jwt.entities";
 
 @Injectable()
 export class UserService implements IUserService {
     constructor(
         @InjectRepository(User) private readonly userRepository: Repository<User>,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+        private readonly jwtService: JwtService
     ) {}
 
     public findById(id: string): Promise<User | undefined> {
@@ -31,8 +35,8 @@ export class UserService implements IUserService {
         return this.userRepository.findOne({ username }, { relations });
     }
 
-    public findByEmail(email: string): Promise<User | undefined> {
-        return this.userRepository.findOne({ email });
+    public findByEmail(email: string, relations?: string[]): Promise<User | undefined> {
+        return this.userRepository.findOne({ email }, { relations });
     }
 
     public async create(payload: CreateUserRequest): Promise<User> {
@@ -43,7 +47,7 @@ export class UserService implements IUserService {
         await this.userRepository.delete(id);
     }
 
-    public async changeUsername(user: SessionUserEntity, changeUsernameRequest: ChangeUsernameRequest): Promise<void> {
+    public async changeUsername(user: SessionUserEntity, changeUsernameRequest: ChangeUsernameRequest): Promise<JwtResponse> {
         const { newUsername, password } = changeUsernameRequest;
         await this.validateUserPassword(user.id, password);
         const existingUser = await this.findByUsername(newUsername);
@@ -52,20 +56,32 @@ export class UserService implements IUserService {
         }
         await this.userRepository.update({ id: user.id }, { username: newUsername });
         await this.cacheManager.del(user.id);
+        return this.createJWT({
+            id: user.id,
+            username: newUsername,
+            email: user.email,
+            vmInstances: user.vmInstances
+        });
     }
 
-    public async changeEmail(user: SessionUserEntity, changeEmailRequest: ChangeEmailRequest): Promise<void> {
+    public async changeEmail(user: SessionUserEntity, changeEmailRequest: ChangeEmailRequest): Promise<JwtResponse> {
         const { newEmail, password } = changeEmailRequest;
         await this.validateUserPassword(user.id, password);
-        const existingUser = await this.findByEmail(newEmail);
+        const existingUser = await this.findByEmail(newEmail, ["vmInstances"]);
         if (existingUser) {
             throw new UserAlreadyExistsError(UserConflictReasons.email);
         }
         await this.userRepository.update({ id: user.id }, { email: newEmail });
         await this.cacheManager.del(user.id);
+        return this.createJWT({
+            id: user.id,
+            username: user.username,
+            email: newEmail,
+            vmInstances: user.vmInstances
+        });
     }
 
-    public async changePassword(user: SessionUserEntity, changePasswordRequest: ChangePasswordRequest): Promise<void> {
+    public async changePassword(user: SessionUserEntity, changePasswordRequest: ChangePasswordRequest): Promise<JwtResponse> {
         const { currentPassword, newPassword, confirmedNewPassword } = changePasswordRequest;
         await this.validateUserPassword(user.id, currentPassword);
         if (newPassword !== confirmedNewPassword) {
@@ -75,6 +91,12 @@ export class UserService implements IUserService {
             password: await bcrypt.hash(newPassword, await bcrypt.genSalt())
         });
         await this.cacheManager.del(user.id);
+        return this.createJWT({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            vmInstances: user.vmInstances
+        });
     }
 
     private async validateUserPassword(userId: string, password: string): Promise<void> {
@@ -85,5 +107,11 @@ export class UserService implements IUserService {
         if (!await bcrypt.compare(password, user.password)) {
             throw new WrongPasswordError();
         }
+    }
+
+    private async createJWT(user: ValidateUserResponse) {
+        const token = this.jwtService.sign(user);
+        await this.cacheManager.set<string>(user.id, token, { ttl: config.jwt.lifespan });
+        return { token };
     }
 }

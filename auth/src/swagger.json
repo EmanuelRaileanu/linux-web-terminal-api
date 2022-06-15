@@ -188,8 +188,15 @@
                     }
                 },
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -241,8 +248,15 @@
                     }
                 },
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -294,8 +308,15 @@
                     }
                 },
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request",

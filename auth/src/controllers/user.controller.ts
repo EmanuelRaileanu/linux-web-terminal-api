@@ -4,6 +4,7 @@ import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { JwtExceptionFilter } from "../filters/jwt-exception.filter";
 import { UserEntityHolder } from "@shared/entities";
+import { JwtResponse } from "../entities/jwt.entities";
 
 @UseFilters(JwtExceptionFilter)
 @UseGuards(JwtAuthGuard)
@@ -11,21 +12,21 @@ import { UserEntityHolder } from "@shared/entities";
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
-    @HttpCode(HttpStatus.NO_CONTENT)
+    @HttpCode(HttpStatus.OK)
     @Post("change-username")
-    public changeUsername(@Request() req: UserEntityHolder, @Body() body: ChangeUsernameRequest): Promise<void> {
+    public changeUsername(@Request() req: UserEntityHolder, @Body() body: ChangeUsernameRequest): Promise<JwtResponse> {
         return this.userService.changeUsername(req.user, body);
     }
 
-    @HttpCode(HttpStatus.NO_CONTENT)
+    @HttpCode(HttpStatus.OK)
     @Post("change-email")
-    public changeEmail(@Request() req: UserEntityHolder, @Body() body: ChangeEmailRequest): Promise<void> {
+    public changeEmail(@Request() req: UserEntityHolder, @Body() body: ChangeEmailRequest): Promise<JwtResponse> {
         return this.userService.changeEmail(req.user, body);
     }
 
-    @HttpCode(HttpStatus.NO_CONTENT)
+    @HttpCode(HttpStatus.OK)
     @Post("change-password")
-    public changePassword(@Request() req: UserEntityHolder, @Body() body: ChangePasswordRequest): Promise<void> {
+    public changePassword(@Request() req: UserEntityHolder, @Body() body: ChangePasswordRequest): Promise<JwtResponse> {
         return this.userService.changePassword(req.user, body);
     }
 }

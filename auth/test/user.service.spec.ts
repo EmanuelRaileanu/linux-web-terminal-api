@@ -15,6 +15,7 @@ import {
 } from "@shared/errors";
 import { SessionUserEntity } from "@shared/entities";
 import { ENTITIES } from "@shared/db-entities";
+import { JwtModule, JwtService } from "@nestjs/jwt";
 
 describe(UserService, () => {
     let users: User[];
@@ -31,6 +32,10 @@ describe(UserService, () => {
                     ...config.db,
                     database: config.testDb,
                     entities: ENTITIES
+                }),
+                JwtModule.register({
+                    secret: config.jwt.secret,
+                    signOptions: { expiresIn: config.jwt.lifespan + "s" }
                 }),
                 CacheModule.register()
             ],
@@ -134,7 +139,7 @@ describe(UserService, () => {
             password: "password"
         };
         const promise = userService.changeUsername(users[0] as unknown as SessionUserEntity, changeUsernameRequest);
-        await expect(promise).resolves.toEqual(undefined);
+        await expect(promise).resolves.toBeTruthy();
         users[0] = { ...users[0], username: changeUsernameRequest.newUsername };
         const updatedUser = await userService.findById(users[0].id);
         return expect(updatedUser?.username).toEqual(users[0].username);
@@ -174,7 +179,7 @@ describe(UserService, () => {
             password: "password"
         };
         const promise = userService.changeEmail(users[0] as unknown as SessionUserEntity, changeEmailRequest);
-        await expect(promise).resolves.toEqual(undefined);
+        await expect(promise).resolves.toBeTruthy();
         users[0] = { ...users[0], email: changeEmailRequest.newEmail };
         const updatedUser = await userService.findById(users[0].id);
         return expect(updatedUser?.email).toEqual(users[0].email);
@@ -206,7 +211,7 @@ describe(UserService, () => {
             confirmedNewPassword: "sparta"
         };
         const promise = userService.changePassword(users[0] as unknown as SessionUserEntity, changePasswordRequest);
-        await expect(promise).resolves.toEqual(undefined);
+        await expect(promise).resolves.toBeTruthy();
         const updatedUser = await userService.findById(users[0].id);
         users[0] = { ...users[0], password: updatedUser?.password as string };
         return expect(await bcrypt.compare(changePasswordRequest.newPassword, updatedUser?.password as string));

@@ -2,6 +2,7 @@ import { User } from "@shared/db-entities/user.entity";
 import { CreateUserRequest } from "./auth.entities";
 import { SessionUserEntity } from "@shared/entities";
 import { ChangeEmailRequest, ChangePasswordRequest, ChangeUsernameRequest } from "./user.entities";
+import { JwtResponse } from "./jwt.entities";
 
 export interface IUserService {
     findById(id: string): Promise<User | undefined>;
@@ -14,10 +15,10 @@ export interface IUserService {
 
     deleteById(id: string): Promise<void>;
 
-    changeUsername(user: SessionUserEntity, changeUsernameRequest: ChangeUsernameRequest): Promise<void>;
+    changeUsername(user: SessionUserEntity, changeUsernameRequest: ChangeUsernameRequest): Promise<JwtResponse>;
 
-    changeEmail(user: SessionUserEntity, changeEmailRequest: ChangeEmailRequest): Promise<void>;
+    changeEmail(user: SessionUserEntity, changeEmailRequest: ChangeEmailRequest): Promise<JwtResponse>;
 
-    changePassword(user: SessionUserEntity, changePasswordRequest: ChangePasswordRequest): Promise<void>;
+    changePassword(user: SessionUserEntity, changePasswordRequest: ChangePasswordRequest): Promise<JwtResponse>;
 
 }
