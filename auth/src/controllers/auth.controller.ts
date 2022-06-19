@@ -28,7 +28,7 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @HttpCode(HttpStatus.OK)
+    @HttpCode(HttpStatus.NO_CONTENT)
     @Post("logout")
     public logout(@Request() req: UserEntityHolder): Promise<void> {
         return this.authService.logout(req.user);

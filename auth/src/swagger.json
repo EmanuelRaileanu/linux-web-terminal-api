@@ -140,6 +140,21 @@
                 }
             }
         },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "operationId": "AuthController.logout",
+                "description": "Logout",
+                "security": [],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/api/v1/validate-token": {
             "get": {
                 "tags": [
