@@ -3,6 +3,7 @@ import { Socket } from "socket.io";
 import { NodeSSH } from "node-ssh";
 import { SSHInitRequest, SSHInstallationInitRequest } from "../entities";
 import { config } from "../config";
+import { ClientChannel } from "ssh2";
 
 @Injectable()
 export class SSHService {
@@ -21,7 +22,7 @@ export class SSHService {
 
     private async streamDataThroughShell(ws: Socket): Promise<void> {
         const shellStream = await this.ssh.requestShell();
-        ws.on("command", command => {
+        ws.on("command", (command: string) => {
             shellStream.write(command.trim() + "\n");
         });
         shellStream.on("data", (data: string) => {
@@ -29,6 +30,13 @@ export class SSHService {
         });
         shellStream.stderr.on("data", (data: string) => {
             ws.send(data);
+        });
+        this.handleSignals(ws, shellStream);
+    }
+
+    private handleSignals(ws: Socket, shellStream: ClientChannel) {
+        ws.on("SIGINT", () => {
+            shellStream.end();
         });
     }
 }
