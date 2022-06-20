@@ -36,6 +36,7 @@ export class SSHService {
 
     private handleSignals(ws: Socket, shellStream: ClientChannel) {
         ws.on("SIGINT", () => {
+            console.log("SIGINT received");
             shellStream.signal("INT");
         });
     }
