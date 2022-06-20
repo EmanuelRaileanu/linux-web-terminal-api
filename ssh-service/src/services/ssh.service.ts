@@ -38,5 +38,8 @@ export class SSHService {
         ws.on("SIGINT", () => {
             shellStream.write("\x03");
         });
+        ws.on("SIGTSTP", () => {
+            shellStream.write("\x1A");
+        });
     }
 }
