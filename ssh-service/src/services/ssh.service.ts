@@ -11,17 +11,19 @@ export class SSHService {
 
     public async establishSSHConnection(ws: Socket, sshConfig: SSHInitRequest): Promise<void> {
         await this.ssh.connect(sshConfig);
-        return this.streamDataThroughShell(ws);
+        const shellStream = await this.ssh.requestShell();
+        return this.streamDataThroughShell(ws, shellStream);
     }
 
     public async establishSSHConnectionForInstallation(ws: Socket, sshConfig: SSHInstallationInitRequest): Promise<void> {
         await this.ssh.connect({ ...config.hostMachine, ...sshConfig });
         await this.ssh.execCommand(`virsh console ${sshConfig.vmName}`);
-        return this.streamDataThroughShell(ws);
+        const shellStream = await this.ssh.requestShell();
+        shellStream.write(`virsh console ${sshConfig.vmName}\n`);
+        return this.streamDataThroughShell(ws, shellStream);
     }
 
-    private async streamDataThroughShell(ws: Socket): Promise<void> {
-        const shellStream = await this.ssh.requestShell();
+    private async streamDataThroughShell(ws: Socket, shellStream: ClientChannel): Promise<void> {
         ws.on("command", (command: string) => {
             shellStream.write(command.trim() + "\n");
         });
