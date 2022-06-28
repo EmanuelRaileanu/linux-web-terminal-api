@@ -15,7 +15,7 @@ import {
 } from "@shared/errors";
 import { SessionUserEntity } from "@shared/entities";
 import { ENTITIES } from "@shared/db-entities";
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from "@nestjs/jwt";
 
 describe(UserService, () => {
     let users: User[];
